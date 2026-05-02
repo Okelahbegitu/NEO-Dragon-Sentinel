@@ -1,0 +1,21 @@
+{
+  "name": "sebastian_the_cat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "deploy:commands": "node command-deployment.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "discord.js": "^14.26.2",
+    "dotenv": "^17.4.1",
+    "mongodb": "^7.1.1",
+    "mongoose": "^9.4.1"
+  }
+}
