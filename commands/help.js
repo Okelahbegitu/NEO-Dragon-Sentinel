@@ -9,7 +9,7 @@ module.exports = {
             .addFields(
                 { name: "⚡ Umum", value: "`/ping` - Cek bot\n`/help` - Lihat command" },
                 { name: "🛡️ Moderasi", value: "`/warn` - Memberi peringatan" },
-                { name: "👑 Admin", value: "`/add_perms_admin_troll` - Tambah admin troll" }
+                { name: "👑 Admin", value: "`/add_perms_admin_troll` - Beri izin admin troll\n` /remove_perms_admin_troll` - Cabut izin admin troll\n`/setup_trap` - Siapkan jebakan untuk Raid / Mass-adverstiment" }
             )
             .setColor("#5865F2")
             .setFooter({ text: "Dragon Sentinel NEO" });

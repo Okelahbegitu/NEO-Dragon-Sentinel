@@ -1,6 +1,6 @@
 module.exports = {
   name: "setup_filter_link",
-  description: "Aktifkan atau nonaktifkan filter link di server ini.",
+  description: "Aktifkan atau nonaktifkan filter link di server ini. (On dev)",
   options: [
     {
       name: "channel",
@@ -19,6 +19,7 @@ module.exports = {
       ]
     }
   ], async execute(interaction) {
+    if(true) return await interaction.reply("Fitur ini masih dalam pengembangan. Mohon tunggu update selanjutnya!");
     const channel = interaction.options.getChannel("channel");
     const status = interaction.options.getString("status");
 
