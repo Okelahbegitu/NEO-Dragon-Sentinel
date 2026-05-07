@@ -1,6 +1,10 @@
+const Member = require("../models/PermsAdminTroll");
+const FilterChannel = require("../models/FilterLinkChannel");
+
+
 module.exports = {
   name: "setup_filter_link",
-  description: "Aktifkan atau nonaktifkan filter link di server ini. (On dev)",
+  description: "Membuat channel yang ditentukan untuk menyeleksi link aneh ",
   options: [
     {
       name: "channel",
@@ -8,22 +12,28 @@ module.exports = {
       type: 7,
       required: true,
     },
-    {
-      name: "status",
-      description: "Status filter link",
-      type: 3,
-      required: true,
-      choices: [
-        { name: "Aktif", value: "active" },
-        { name: "Nonaktif", value: "inactive" }
-      ]
-    }
   ], async execute(interaction) {
-    if(true) return await interaction.reply("Fitur ini masih dalam pengembangan. Mohon tunggu update selanjutnya!");
+    //if(true) return await interaction.reply("Fitur ini masih dalam pengembangan. Mohon tunggu update selanjutnya!");
     const channel = interaction.options.getChannel("channel");
-    const status = interaction.options.getString("status");
 
     //simpan di db
-    await interaction.reply(`Filter link telah di set ke ${status} dengan channel ${channel.name}`);
+    const isChannelExist = await FilterChannel.findOne({ guildId: interaction.guildId });
+
+    if(isChannelExist){
+      await FilterChannel.updateOne(
+        {guildId: interaction.guildId},
+        {channelId: interaction.options.getChannel("channel").id},
+        {upsert: true}
+      )
+      console.log("Filter channel updated:", isChannelExist);
+    } else {
+      const newFilterChannel = new FilterChannel({
+        guildId: interaction.guildId,
+        channelId: interaction.options.getChannel("channel").id,
+      });
+      await newFilterChannel.save();
+      console.log("Filter channel saved:", newFilterChannel); 
+    }
+    await interaction.reply(`Filter link telah di set ke berhasil dengan channel ${channel.name}`);
     }
 };

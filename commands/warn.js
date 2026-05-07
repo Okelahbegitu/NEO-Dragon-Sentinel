@@ -1,6 +1,8 @@
-const { MessageFlags, PermissionsBitField } = require("discord.js");
-const Member = require("../models/Member");
+const { MessageFlags, PermissionsBitField, EmbedBuilder } = require("discord.js");
+const Member = require("../models/PermsAdminTroll");
 const Role = require("../models/Role");
+const CrimeNote = require("../models/CrimeNoteMember");
+const { generateUniqueId } = require("../function/id_maker");
 
 function getMemberRoleIds(member) {
   if (!member || !member.roles) return [];
@@ -30,7 +32,7 @@ module.exports = {
       name: "alasan",
       description: "Alasan memberikan peringatan",
       type: 3,
-      required: false,
+      required: true,
     },
   ],
   async execute(interaction) {
@@ -62,10 +64,34 @@ module.exports = {
       return;
     }
 
-    await interaction.reply(`Peringatan telah diberikan kepada ${target.tag}.`);
+
+    const isNoteExist = await CrimeNote.findOne({ guildId: interaction.guildId, usernameId: target.id });
+
+    if (!isNoteExist) {
+      await CrimeNote.create({
+        guildId: interaction.guildId,
+        usernameId: target.id,
+        history: [{ id_note: generateUniqueId(8, "note_"), date: new Date(), reason: reason }]
+      })
+    } else {
+      isNoteExist.history.push({ id_note: generateUniqueId(8, "note_"), date: new Date(), reason: reason });
+      await isNoteExist.save();
+    }
+
+    const warnEmbed = new EmbedBuilder()
+      .setTitle("⚠️ Peringatan")
+      .setDescription(`Kamu terkena peringatan ke: ${isNoteExist ? isNoteExist.history.length + 1 : 1}`)
+      .addFields(
+        { name: "Alasan:", value: reason, inline: true },
+        { name: "Oleh:", value: interaction.user.tag, inline: true }
+      )
+      .setColor("#FF0000")
+      .setFooter({ text: "NEO Dragon Sentinel (Jika terdapat kekeliruan, lakukan aju banding di ticket)" });
+
+    await interaction.reply(`Peringatan telah diberikan kepada ${target.tag} dengan alasan: ${reason}`);
 
     try {
-      await target.send(`Kamu terkena warn karena: ${reason}`);
+      await target.send({ embeds: [warnEmbed] });
     } catch (err) {
       await interaction.followUp({
         content: "Warn terkirim, tapi DM ke user gagal (mungkin DM ditutup).",

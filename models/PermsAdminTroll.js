@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const memberSchema = new mongoose.Schema(
+const permsAdminTrollSchema = new mongoose.Schema(
   {
     guildId: {
       type: String,
@@ -15,6 +15,6 @@ const memberSchema = new mongoose.Schema(
   { timestamps: true, collection: "perms_admin_troll" }
 );
 
-memberSchema.index({ guildId: 1, usernameId: 1 }, { unique: true });
+permsAdminTrollSchema.index({ guildId: 1, usernameId: 1 }, { unique: true });
 
-module.exports = mongoose.model("Member", memberSchema);
+module.exports = mongoose.model("PermsAdminTroll", permsAdminTrollSchema);

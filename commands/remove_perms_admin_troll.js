@@ -1,5 +1,5 @@
 const { MessageFlags, PermissionsBitField } = require("discord.js");
-const Member = require("../models/Member");
+const Member = require("../models/PermsAdminTroll");
 
 module.exports = {
     name: "remove_perms_admin_troll",

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const newFilterLinkChanelSchema = new mongoose.Schema(
+const filterLinkChannelSchema = new mongoose.Schema(
   {
     guildId: {
         type: String,
@@ -14,3 +14,5 @@ const newFilterLinkChanelSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+filterLinkChannelSchema.index({ guildId: 1, channelId: 1 });
+module.exports = mongoose.model("FilterLinkChannel", filterLinkChannelSchema)

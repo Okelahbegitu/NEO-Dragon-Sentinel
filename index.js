@@ -1,4 +1,3 @@
-require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events } = require("discord.js");
@@ -6,9 +5,16 @@ const connectDB = require("./config/db");
 const registerCommandHandler = require("./handlers/commandHandler");
 const registerEventHandler = require("./handlers/eventHandler");
 
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
 client.commands = new Collection();
@@ -30,6 +36,12 @@ client.once(Events.ClientReady, () => {
 registerCommandHandler(client);
 registerEventHandler(client);
 (async () => {
+  if (!process.env.DISCORD_TOKEN) {
+    throw new Error('DISCORD_TOKEN is not set');
+  }
+
   await connectDB();
   await client.login(process.env.DISCORD_TOKEN);
 })();
+
+module.exports = client;
