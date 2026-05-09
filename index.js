@@ -6,8 +6,7 @@ const connectDB = require("./config/db");
 const registerCommandHandler = require("./handlers/commandHandler");
 const registerEventHandler = require("./handlers/eventHandler");
 
-env.validate();
-
+console.log('[BOT] Starting bot initialization...');
 
 const client = new Client({
   intents: [
@@ -36,9 +35,25 @@ client.once(Events.ClientReady, () => {
 
 registerCommandHandler(client);
 registerEventHandler(client);
+
 (async () => {
-  await connectDB();
-  await client.login(env.DISCORD_TOKEN);
+  try {
+    await connectDB();
+    console.log('[BOT] ✅ MongoDB connected');
+  } catch (err) {
+    console.error('[BOT] ❌ MongoDB connection failed');
+  }
+
+  try {
+    if (!env.DISCORD_TOKEN) {
+      throw new Error('DISCORD_TOKEN is not set');
+    }
+    console.log('[BOT] ✅ Discord token found, logging in...');
+    await client.login(env.DISCORD_TOKEN);
+  } catch (err) {
+    console.error('[BOT] ❌ Discord login failed:', err.message);
+    process.exit(1);
+  }
 })();
 
 module.exports = client;

@@ -3,7 +3,14 @@
  * Load dotenv in development, use system env vars in production
  */
 
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+// Debug log
+console.log('[ENV] DB_SERVER:', process.env.DB_SERVER);
+console.log('[ENV] DB_USER:', process.env.DB_USER);
+console.log('[ENV] DB_NAME:', process.env.DB_NAME);
+console.log('[ENV] DB_PORT:', process.env.DB_PORT);
 
 module.exports = {
     // Discord
@@ -18,21 +25,21 @@ module.exports = {
     DB_HOST: process.env.DB_SERVER || process.env.DB_HOST || "localhost",
     DB_USER: process.env.DB_USER || "root",
     DB_NAME: process.env.DB_NAME,
-    DB_PASSWORD: process.env.DB_PASS || process.env.DB_PASSWORD || "",
-    DB_PORT: process.env.DB_PORT || 3306,
+    DB_PASSWORD: (process.env.DB_PASS || process.env.DB_PASSWORD || "").trim(),
+    DB_PORT: parseInt(process.env.DB_PORT || "3306"),
 
     // API Keys
     TOTAL_VIRUS_KEY: process.env.TOTAL_VIRUS_KEY,
 
     /**
-     * Validation helper
+     * Validation helper - tidak throw, cuma log warning
      */
     validate() {
         const required = ['DISCORD_TOKEN', 'CLIENT_ID', 'DB_NAME'];
         const missing = required.filter(key => !this[key]);
 
         if (missing.length > 0) {
-            throw new Error(`Missing required env vars: ${missing.join(', ')}`);
+            console.warn(`[ENV] Warning - Missing env vars: ${missing.join(', ')}`);
         }
     }
 };
