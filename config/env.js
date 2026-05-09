@@ -18,9 +18,6 @@ module.exports = {
     CLIENT_ID: process.env.CLIENT_ID,
     GUILD_ID: process.env.GUILD_ID,
 
-    // MongoDB
-    MONGO_URI: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/testdb",
-
     // MySQL Database
     DB_HOST: process.env.DB_SERVER || process.env.DB_HOST || "localhost",
     DB_USER: process.env.DB_USER || "root",

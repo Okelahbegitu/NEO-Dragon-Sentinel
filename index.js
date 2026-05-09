@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events } = require("discord.js");
 const env = require('./config/env');
-const connectDB = require("./config/db");
 const registerCommandHandler = require("./handlers/commandHandler");
 const registerEventHandler = require("./handlers/eventHandler");
 
@@ -37,13 +36,6 @@ registerCommandHandler(client);
 registerEventHandler(client);
 
 (async () => {
-  try {
-    await connectDB();
-    console.log('[BOT] ✅ MongoDB connected');
-  } catch (err) {
-    console.error('[BOT] ❌ MongoDB connection failed');
-  }
-
   try {
     if (!env.DISCORD_TOKEN) {
       throw new Error('DISCORD_TOKEN is not set');
