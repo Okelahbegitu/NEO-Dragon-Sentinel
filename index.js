@@ -1,11 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events } = require("discord.js");
+const env = require('./config/env');
 const connectDB = require("./config/db");
 const registerCommandHandler = require("./handlers/commandHandler");
 const registerEventHandler = require("./handlers/eventHandler");
 
-require("dotenv").config({ path: path.join(__dirname, ".env") });
+env.validate();
 
 
 const client = new Client({
@@ -36,12 +37,8 @@ client.once(Events.ClientReady, () => {
 registerCommandHandler(client);
 registerEventHandler(client);
 (async () => {
-  if (!process.env.DISCORD_TOKEN) {
-    throw new Error('DISCORD_TOKEN is not set');
-  }
-
   await connectDB();
-  await client.login(process.env.DISCORD_TOKEN);
+  await client.login(env.DISCORD_TOKEN);
 })();
 
 module.exports = client;

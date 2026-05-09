@@ -1,6 +1,6 @@
 const { Events, PermissionsBitField } = require("discord.js");
 const config = require("../models/config_tb");
-require("dotenv").config();
+const env = require("../config/env");
 const axios = require("axios");
 
 function normalizeUrl(rawUrl) {
@@ -80,7 +80,7 @@ module.exports = {
                         headers: {
                             accept: 'application/json',
                             'content-type': 'application/x-www-form-urlencoded',
-                            "x-apikey": process.env.TOTAL_VIRUS_KEY,
+                            "x-apikey": env.TOTAL_VIRUS_KEY,
                         },
                     }
                 );
@@ -94,7 +94,7 @@ module.exports = {
                 const analisisResponse = await axios.get(`https://www.virustotal.com/api/v3/analyses/${id}`, {
                     headers: {
                         accept: 'application/json',
-                        "x-apikey": process.env.TOTAL_VIRUS_KEY,
+                        "x-apikey": env.TOTAL_VIRUS_KEY,
                     },
                 });
 

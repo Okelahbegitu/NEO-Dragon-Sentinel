@@ -1,7 +1,9 @@
-require('dotenv').config();
+const env = require('./config/env');
 const fs = require("fs");
 const path = require("path");
 const { REST, Routes } = require('discord.js');
+
+env.validate();
 
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
@@ -18,8 +20,8 @@ const commands = commandFiles
 const commandNameRegex = /^[a-z0-9_-]{1,32}$/;
 const invalidCommands = commands.filter((cmd) => !commandNameRegex.test(cmd.name));
 
-const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
-const clientId = process.env.CLIENT_ID;
+const rest = new REST({ version: '10' }).setToken(env.DISCORD_TOKEN);
+const clientId = env.CLIENT_ID;
 
 (async () => {
     try {
