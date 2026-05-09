@@ -1,7 +1,5 @@
 const { MessageFlags, PermissionsBitField, EmbedBuilder } = require("discord.js");
-const Member = require("../models/PermsAdminTroll");
-const Role = require("../models/Role");
-const CrimeNote = require("../models/CrimeNoteMember");
+const CrimeNote = require("../models/crime_note_members_tb");
 const { generateUniqueId } = require("../function/id_maker");
 
 function getMemberRoleIds(member) {
@@ -46,17 +44,17 @@ module.exports = {
 
     const isAdmin = interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator);
 
-    const guildRoles = await Role.find({ guildId: interaction.guildId }).lean();
-    const allowedRoleIds = guildRoles.map((item) => item.roleId);
+    //const guildRoles = await Role.findAll({ where: { guild_id: interaction.guildId } });
+    //const allowedRoleIds = guildRoles.map((item) => item.role_id);
+//
+    //const guildMembers = await Member.findAll({ where: { guild_id: interaction.guildId } });
+    //const allowedUserIds = guildMembers.map((item) => item.username_id);
+//
+    //const memberRoleIds = getMemberRoleIds(interaction.member);
+    //const hasAllowedRole = memberRoleIds.some((roleId) => allowedRoleIds.includes(roleId));
+    //const hasAllowedUser = allowedUserIds.includes(interaction.user.id);
 
-    const guildMembers = await Member.find({ guildId: interaction.guildId }).lean();
-    const allowedUserIds = guildMembers.map((item) => item.usernameId);
-
-    const memberRoleIds = getMemberRoleIds(interaction.member);
-    const hasAllowedRole = memberRoleIds.some((roleId) => allowedRoleIds.includes(roleId));
-    const hasAllowedUser = allowedUserIds.includes(interaction.user.id);
-
-    if (!isAdmin && !hasAllowedRole && !hasAllowedUser) {
+    if (!isAdmin ) {
       await interaction.reply({
         content: "Kamu tidak punya izin untuk menggunakan perintah ini.",
         flags: MessageFlags.Ephemeral,
@@ -65,22 +63,20 @@ module.exports = {
     }
 
 
-    const isNoteExist = await CrimeNote.findOne({ guildId: interaction.guildId, usernameId: target.id });
+    // For MySQL we store one row per warning (snake_case fields)
+    const previousNotesCount = await CrimeNote.count({ where: { username_id: target.id } });
 
-    if (!isNoteExist) {
-      await CrimeNote.create({
-        guildId: interaction.guildId,
-        usernameId: target.id,
-        history: [{ id_note: generateUniqueId(8, "note_"), date: new Date(), reason: reason }]
-      })
-    } else {
-      isNoteExist.history.push({ id_note: generateUniqueId(8, "note_"), date: new Date(), reason: reason });
-      await isNoteExist.save();
-    }
+    await CrimeNote.create({
+      username_id: target.id,
+      crime_note: reason,
+      date: new Date(),
+      reason: reason,
+      status: 'active',
+    });
 
     const warnEmbed = new EmbedBuilder()
       .setTitle("⚠️ Peringatan")
-      .setDescription(`Kamu terkena peringatan ke: ${isNoteExist ? isNoteExist.history.length + 1 : 1}`)
+      .setDescription(`Kamu terkena peringatan ke: ${previousNotesCount + 1}`)
       .addFields(
         { name: "Alasan:", value: reason, inline: true },
         { name: "Oleh:", value: interaction.user.tag, inline: true }

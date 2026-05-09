@@ -1,5 +1,5 @@
 const { Events, PermissionsBitField } = require("discord.js");
-const FilterChannel = require("../models/FilterLinkChannel");
+const config = require("../models/config_tb");
 require("dotenv").config();
 const axios = require("axios");
 
@@ -50,15 +50,15 @@ module.exports = {
 
         if (message.guild?.ownerId === message.author.id) return;
 
-        const idChannel = await FilterChannel.findOne({ guildId: message.guild.id });
-        if (!idChannel) {
+        const filter_channel = await config.findOne({ where: { key_name: 'filter_channel' } });
+        if (!filter_channel) {
             console.warn(`Filter channel not configured for guild ${message.guild.id}`);
             return;
         }
 
-        const channel = message.guild.channels.cache.get(idChannel.channelId);
+        const channel = message.guild.channels.cache.get(filter_channel.channelId);
         if (!channel) {
-            console.warn(`Filter channel ${idChannel.channelId} not found in guild ${message.guild.id}`);
+            console.warn(`Filter channel ${filter_channel.channelId} not found in guild ${message.guild.id}`);
             return;
         }
 
