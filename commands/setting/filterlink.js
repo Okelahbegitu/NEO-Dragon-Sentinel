@@ -1,8 +1,20 @@
 const config = require("../../models/config_tb");
+const { PermissionsBitField } = require('discord.js');
+
 
 module.exports = async function filterLink(interaction) {
     const channel = interaction.options.getChannel("channel");
-
+    if (!interaction.inGuild() || !interaction.guildId) {
+        await interaction.reply({ content: "Command ini hanya bisa digunakan di dalam server.", ephemeral: true });
+        return;
+    }
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+        await interaction.reply({
+            content: "Anda tidak memiliki izin untuk menggunakan perintah ini.",
+            ephemeral: true,
+        });
+        return;
+    }
     //simpan di db
     const isChannelExist = await config.findOne({ where: { key_name: 'filter_channel' } });
 

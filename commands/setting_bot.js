@@ -2,6 +2,7 @@ const filterLink = require("./setting/filterlink");
 const setChannelLog = require("./setting/setchannellog");
 const setupTrap = require("./setting/setuptrap");
 const setCooldown = require("./setting/cooldown");
+const { PermissionsBitField } = require('discord.js'); // ← tambah ini
 
 module.exports = {
     name: "settingbot",

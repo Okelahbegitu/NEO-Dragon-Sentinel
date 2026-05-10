@@ -32,12 +32,7 @@ module.exports = {
     async execute(message) {
         if (message.author.bot) return;
         if (!message.guild) return;
-        if (!message.content) {
-            console.warn(
-                `Empty message content in guild ${message.guild.id}. Enable Message Content Intent in the Discord Developer Portal.`
-            );
-            return;
-        }
+        if (!message.content || message.content.trim() === '') return;
         const redflag_domain = ['.xyz', '.top', '.club', '.online', '.site', '.website', '.space', '.tech', '.store', '.info', '.biz', '.io', 'vercel.app', 'netlify.app', 'suspicos.com', 'suspicos.net', 'suspicos.org'];
         const urlMatches = message.content.match(/https?:\/\/\S+|www\.\S+/gi) ?? [];
         const content = message.content.toLowerCase();
