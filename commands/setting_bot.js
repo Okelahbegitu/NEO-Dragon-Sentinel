@@ -2,7 +2,8 @@ const filterLink = require("./setting/filterlink");
 const setChannelLog = require("./setting/setchannellog");
 const setupTrap = require("./setting/setuptrap");
 const setCooldown = require("./setting/cooldown");
-const { PermissionsBitField } = require('discord.js'); // ← tambah ini
+const welcomebye_channel = require("./setting/welcomebye_channel");
+const rule_channel = require("./setting/setrule_channel");
 
 module.exports = {
     name: "settingbot",
@@ -59,6 +60,32 @@ module.exports = {
                     required: true,
                 },
             ],
+        },
+        {
+            name: "welcome-byechannel",
+            description: "Atur channel untuk pesan welcome dan goodbye",
+            type: 1,
+            options: [
+                {
+                    name: "channel",
+                    description: "Pilih channel untuk welcome dan goodbye",
+                    type: 7,
+                    required: true,
+                }
+            ],
+        },
+        {
+            name: "setrule_channel",
+            description: "Atur channel untuk pesan peraturan",
+            type: 1,
+            options: [
+                {
+                    name: "channel",
+                    description: "Pilih channel untuk pesan peraturan",
+                    type: 7,
+                    required: true,
+                }
+            ],
         }
     ],
     async execute(interaction) {
@@ -76,13 +103,22 @@ module.exports = {
             return setupTrap(interaction);
         }
 
-            if (subcommand === "cooldown") {
+        if (subcommand === "cooldown") {
             return setCooldown(interaction);
+        }
+
+        if (subcommand === "welcomebyechannel") {
+            return await welcomebye_channel(interaction);
+        }
+
+        if (subcommand === "setrule_channel") {
+            // Implementasi untuk setrule_channel
+            return rule_channel(interaction);
         }
 
         return interaction.reply({
             content: "Subcommand tidak dikenal.",
             ephemeral: true,
         });
-    },
+    }
 };

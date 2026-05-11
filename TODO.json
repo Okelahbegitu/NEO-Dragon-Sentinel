@@ -1,4 +1,35 @@
 {
   "todo": [],
-  "completed": []
+  "completed": [
+    {
+      "id": 10725,
+      "text": "Auto role",
+      "priority": 1,
+      "created": "2026-05-10T05:15:26.034Z"
+    },
+    {
+      "id": 18664,
+      "text": "Leave embed",
+      "priority": 1,
+      "created": "2026-05-10T05:15:08.914Z"
+    },
+    {
+      "id": 18710,
+      "text": "Welcome embed",
+      "priority": 1,
+      "created": "2026-05-10T05:15:00.571Z"
+    },
+    {
+      "id": 13246,
+      "text": "Age Checker",
+      "priority": 1,
+      "created": "2026-05-10T06:24:49.034Z"
+    },
+    {
+      "id": 14711,
+      "text": "Member counter",
+      "priority": 1,
+      "created": "2026-05-10T05:15:17.347Z"
+    }
+  ]
 }

@@ -55,7 +55,7 @@ module.exports = {
                 .setDescription("Perintah moderasi:")
                 .addFields(
                     { name: "⚠️ Warn", value: "`/warn` - Memberi peringatan" },
-                    { name: "✒️ Set Expired Crime Note", value: "`/crimenote setexpired` - Menghapus catatan kriminal yang sudah kadaluarsa" },
+                    { name: "✒️ Set Expired Crime Note", value: "`/crimenote setexpired` -  Set catatan kriminal yang aktif ke kadaluarsa" },
                 )
                 .setColor("#5865F2")
                 .setFooter({ text: "EnderBot" });
