@@ -1,0 +1,14 @@
+[33m21ea038[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m9b37d3a[m HEAD@{1}: checkout: moving from main to main
+[33m9b37d3a[m HEAD@{2}: commit: update: nsfw detector, better security
+[33m21ea038[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{3}: commit: add: message listener that replace domain media link
+[33mbbafd4d[m HEAD@{4}: commit: add: run main.js to deploy and run bot
+[33m34e1b2a[m HEAD@{5}: commit: add: welcome/bye system, embeded rule
+[33m729182b[m HEAD@{6}: commit: remove: remove unneed debug coonsole; fix: add PermissionsBitField in settingbot filter link command
+[33ma41fe44[m HEAD@{7}: commit: remove monggoDB because we dont need it
+[33mbb478a7[m HEAD@{8}: commit: fixing using .env #2
+[33m57d379f[m HEAD@{9}: commit: fixing using .env
+[33m953d26b[m HEAD@{10}: commit: migrate: monggoDB -> Mysql; update: change all modle monggoDB -> Mysql, Recornize like made the sub-command, add cooldown system
+[33mbfea400[m HEAD@{11}: commit: update: that /warn can take a note and save it; add: crime_note for history of crime that writen from /warn and can show and also make it expired
+[33mf5bbae2[m HEAD@{12}: commit: update: perjelas /help, disable /setup_filter_link
+[33m2802c27[m HEAD@{13}: commit (initial): setup
