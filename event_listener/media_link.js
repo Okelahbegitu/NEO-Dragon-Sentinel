@@ -13,7 +13,7 @@ module.exports = {
             //kirim ulang di channel yang sama
             const mediaLink = lintMedia(message.content);
             if (!mediaLink) return;
-            message.channel.send(mediaLink).catch(() => null);
+            message.channel.send(`[Send by ${user.tag}](${mediaLink})`).catch(() => null);
         }
         catch (error) {
             console.error(`Error processing media link for ${user.tag}:`, error);

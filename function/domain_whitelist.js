@@ -1,0 +1,47 @@
+const whitelist_domain = [
+    'youtube.com',
+    'discord.com',
+    'github.com',
+    'twitter.com',
+    'facebook.com',
+    'linkedin.com',
+    'instagram.com',
+    'twitch.tv',
+    'reddit.com',
+    'medium.com',
+    'dev.to',
+    'stackoverflow.com',
+    'gitlab.com',
+    'bitbucket.org',
+    'npmjs.com',
+    'pypi.org',
+    'rubygems.org',
+    'packagist.org',
+    'maven.org',
+    'nuget.org',
+    'crates.io',
+    'hackage.haskell.org',
+    'hex.pm',
+    'cocoapods.org',
+    'pub.dev',
+    'dart.dev',
+    'flutter.dev',
+    'angular.io',
+    'reactjs.org',
+    'vuejs.org',
+    'svelte.dev',
+    'emberjs.com',
+    'backbonejs.org',
+    'jquery.com',
+    'lodash.com',
+    'momentjs.com',
+    'axios-http.com',
+    'expressjs.com',
+    'nestjs.com',
+];
+
+function isWhitelisted(hostname) {
+    return whitelist_domain.includes(hostname);
+}
+
+module.exports = isWhitelisted;

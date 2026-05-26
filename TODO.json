@@ -1,35 +1,96 @@
 {
-  "todo": [],
+  "todo": [
+    {
+      "id": 12622,
+      "text": "Scam keyword detection",
+      "priority": 1,
+      "created": "2026-05-12T12:17:16.399Z"
+    },
+    {
+      "id": 16996,
+      "text": "NSFW link detection",
+      "priority": 1,
+      "created": "2026-05-12T12:17:11.310Z"
+    },
+    {
+      "id": 18114,
+      "text": " Raid trap improvement",
+      "priority": 2,
+      "created": "2026-05-12T12:18:57.163Z"
+    },
+    {
+      "id": 18188,
+      "text": "Suspicious unicode detection",
+      "priority": 2,
+      "created": "2026-05-12T12:18:33.711Z"
+    },
+    {
+      "id": 14545,
+      "text": "Invite scam detection",
+      "priority": 2,
+      "created": "2026-05-12T12:18:31.281Z"
+    },
+    {
+      "id": 17538,
+      "text": "VirusTotal integration optimization",
+      "priority": 2,
+      "created": "2026-05-12T12:18:22.708Z"
+    },
+    {
+      "id": 11243,
+      "text": "Domain Blacklist",
+      "priority": 2,
+      "created": "2026-05-12T12:18:14.474Z"
+    },
+    {
+      "id": 15541,
+      "text": " Duplicate message detection",
+      "priority": 3,
+      "created": "2026-05-12T12:18:49.843Z"
+    },
+    {
+      "id": 10530,
+      "text": "Warn expiration system",
+      "priority": 3,
+      "created": "2026-05-12T12:18:40.551Z"
+    },
+    {
+      "id": 10068,
+      "text": "Criminal record / warn history",
+      "priority": 3,
+      "created": "2026-05-12T12:18:37.288Z"
+    }
+  ],
   "completed": [
     {
-      "id": 10725,
-      "text": "Auto role",
+      "id": 17451,
+      "text": "Spam detection",
       "priority": 1,
-      "created": "2026-05-10T05:15:26.034Z"
+      "created": "2026-05-12T12:17:58.463Z"
     },
     {
-      "id": 18664,
-      "text": "Leave embed",
+      "id": 11537,
+      "text": "Mass mention detection",
       "priority": 1,
-      "created": "2026-05-10T05:15:08.914Z"
+      "created": "2026-05-12T12:17:54.263Z"
     },
     {
-      "id": 18710,
-      "text": "Welcome embed",
+      "id": 18626,
+      "text": " Ban threshold system",
       "priority": 1,
-      "created": "2026-05-10T05:15:00.571Z"
+      "created": "2026-05-12T12:17:42.183Z"
     },
     {
-      "id": 13246,
-      "text": "Age Checker",
+      "id": 17003,
+      "text": "Timeout escalation",
       "priority": 1,
-      "created": "2026-05-10T06:24:49.034Z"
+      "created": "2026-05-12T12:17:37.511Z"
     },
     {
-      "id": 14711,
-      "text": "Member counter",
+      "id": 15434,
+      "text": "Auto punishment escalation",
       "priority": 1,
-      "created": "2026-05-10T05:15:17.347Z"
+      "created": "2026-05-12T12:17:33.030Z"
     }
   ]
 }

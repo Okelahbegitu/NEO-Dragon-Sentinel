@@ -28,6 +28,9 @@ module.exports = {
     // API Keys
     TOTAL_VIRUS_KEY: process.env.TOTAL_VIRUS_KEY,
 
+    EXPRESS_PORT: parseInt(process.env.EXPRESS_PORT || "3001"),
+    API_URL: process.env.API_URL || `http://localhost:${process.env.EXPRESS_PORT || 3001}`,
+
     /**
      * Validation helper - tidak throw, cuma log warning
      */

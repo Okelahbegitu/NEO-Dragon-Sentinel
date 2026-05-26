@@ -2,30 +2,18 @@ const { Events, PermissionsBitField } = require("discord.js");
 const config = require("../models/config_tb");
 const env = require("../config/env");
 const axios = require("axios");
+const vt_detector = require("../function/VT_detector");
+const extractUrls = require("../function/extract_urls");
+const normalizeUrl = require("../function/normalize_url");
+const getHostname = require("../function/get_hostname");
+const isWhitelisted = require("../function/domain_whitelist");
+const isBlacklisted = require("../function/domain_blacklist");
+const typo_detector = require("../function/typo_detector");
+const scam_keyword = require("../function/scam_keyword");
+const warn = require("../commands/warn");
 
-function normalizeUrl(rawUrl) {
-    if (!rawUrl) return null;
 
-    // Bersihkan karakter yang sering ikut kebawa dari chat Discord.
-    const cleanedUrl = rawUrl
-        .trim()
-        .replace(/^[<(["']+/, "")
-        .replace(/[>)]+["']*$/, "")
-        .replace(/[.,!?]+$/, "")
-        .replace(/^\/+/, "");
 
-    if (!cleanedUrl) return null;
-
-    if (/^https?:\/\//i.test(cleanedUrl)) {
-        return cleanedUrl;
-    }
-
-    if (/^www\./i.test(cleanedUrl)) {
-        return `https://${cleanedUrl}`;
-    }
-
-    return `https://${cleanedUrl}`;
-}
 
 module.exports = {
     name: Events.MessageCreate,
@@ -33,82 +21,58 @@ module.exports = {
         if (message.author.bot) return;
         if (!message.guild) return;
         if (!message.content || message.content.trim() === '') return;
-        const redflag_domain = ['.xyz', '.top', '.club', '.online', '.site', '.website', '.space', '.tech', '.store', '.info', '.biz', '.io', 'vercel.app', 'netlify.app', 'suspicos.com', 'suspicos.net', 'suspicos.org'];
-        const urlMatches = message.content.match(/https?:\/\/\S+|www\.\S+/gi) ?? [];
-        const content = message.content.toLowerCase();
+        let total_score = 0;
 
-        const hasSuspiciousHint = redflag_domain.some((domain) => content.includes(domain));
-        const urlsToCheck = urlMatches.length > 0 ? urlMatches : (hasSuspiciousHint ? [message.content] : []);
+        const reasons = [];
+        const scam_keyword_result = scam_keyword(message.content);
 
-        // Kalau tidak ada URL yang bisa diuji, hentikan di sini.
-        if (urlsToCheck.length === 0) return;
 
-        if (message.guild?.ownerId === message.author.id) return;
+        total_score += scam_keyword_result.score;
+        reasons.push(...scam_keyword_result.reasons);
 
-        const filter_channel = await config.findOne({ where: { key_name: 'filter_channel' } });
-        if (!filter_channel) {
-            console.warn(`Filter channel not configured for guild ${message.guild.id}`);
-            return;
+        const urls = extractUrls(message.content);
+        if (urls.length === 0) return;
+
+        for (const rawUrl of urls) {
+            const normalizedUrl = normalizeUrl(rawUrl);
+            if (!normalizedUrl) continue;
+            const hostname = getHostname(normalizedUrl);
+            if (!hostname) continue;
+            if (isWhitelisted(hostname)) continue;
+
+            const blacklist_result = isBlacklisted(hostname);
+            if (blacklist_result) {
+                total_score += blacklist_result.score;
+                reasons.push(...blacklist_result.reasons);
+            }
         }
 
-        const channel = message.guild.channels.cache.get(filter_channel.channelId);
-        if (!channel) {
-            console.warn(`Filter channel ${filter_channel.channelId} not found in guild ${message.guild.id}`);
-            return;
+        const typo_detector_result = typo_detector(urls);
+        total_score += typo_detector_result.total_score;
+        for (const reason of typo_detector_result.reasons) {
+            reasons.push(reason);
         }
 
         try {
-            for (const rawUrl of urlsToCheck) {
-                // Ubah format pesan jadi URL yang aman dikirim ke VirusTotal.
-                const normalizedUrl = normalizeUrl(rawUrl);
-
-                if (!normalizedUrl) {
-                    console.warn(`Skipped invalid URL from ${message.author.tag}:`, rawUrl);
-                    continue;
-                }
-
-                // Kirim URL ke VirusTotal untuk dibuat analisis.
-                const response = await axios.post(
-                    "https://www.virustotal.com/api/v3/urls",
-                    new URLSearchParams({ url: normalizedUrl }).toString(),
-                    {
-                        headers: {
-                            accept: 'application/json',
-                            'content-type': 'application/x-www-form-urlencoded',
-                            "x-apikey": env.TOTAL_VIRUS_KEY,
-                        },
-                    }
-                );
-
-                const id = response.data.data.id;
-
-                // Tunggu sebentar supaya hasil analisis VirusTotal siap diambil.
-                await new Promise((resolve) => setTimeout(resolve, 3000));
-
-                // Ambil hasil analisis URL dari VirusTotal.
-                const analisisResponse = await axios.get(`https://www.virustotal.com/api/v3/analyses/${id}`, {
-                    headers: {
-                        accept: 'application/json',
-                        "x-apikey": env.TOTAL_VIRUS_KEY,
-                    },
-                });
-
-                const analisisData = analisisResponse.data.data.attributes.stats;
-                const isSafe = analisisData.malicious === 0 && analisisData.suspicious === 0;
-
-                if (!isSafe) {
-                    await channel.send(`Link yang dibagikan oleh ${message.author} terdeteksi sebagai Suspicos! Link: ${normalizedUrl}`);
-                    await message.delete();
-                    console.log(`User ${message.author.tag} has been flagged for sharing Suspicos link.`);
-                }
-            }
+            const vt_result = await vt_detector(message, urls);
+            total_score += vt_result.score;
+            reasons.push(...vt_result.reason);
         } catch (error) {
-            const vtError = error.response?.data?.error;
-            if (vtError) {
-                console.error(`VirusTotal rejected link from ${message.author.tag}:`, vtError);
-            } else {
-                console.error(`Error checking link from ${message.author.tag}:`, error);
-            }
+            console.error(`Error checking URL ${urls}:`, error);
         }
+
+        if(total_score >= 10) {
+            //hapus message
+            await message.delete();
+            //warn user
+            warn.giveWarn(message.member, reasons.join('\n'), message.client);
+        } if (total_score >= 20) {
+            //hapus message
+            await message.delete();
+
+            //ban user
+            await message.member.ban({ reason: reasons.join('\n') });
+        }
+
     }
 }

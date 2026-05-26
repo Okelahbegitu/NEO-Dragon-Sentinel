@@ -1,4 +1,11 @@
 const path = require('path');
+const multer = require('multer');
+const nsfwjs = require('nsfwjs');
+const tf = require("@tensorflow/tfjs");
+const fs = require("fs");
+const sharp = require("sharp");
+const env = require('../config/env');
+
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -8,6 +15,14 @@ const client = require('../index');
 
 
 const app = express();
+const upload = multer({ dest: "uploads/" });
+let model;
+
+(async () => {
+  console.log('Loading NSFW model...');
+  model = await nsfwjs.load();
+  console.log('NSFW model loaded');
+})();
 
 app.use(cors());
 app.use(express.json());
@@ -44,6 +59,64 @@ app.get('/members/:guildId/:userId', async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log('API is running on http://localhost:3001');
+app.post("/scan", upload.single("image"), async (req, res) => {
+  let imageTensor;
+
+  try {
+    if (!model) {
+      return res.status(503).json({ error: 'Model NSFW belum siap. Coba lagi nanti.' });
+    }
+    if (!req.file) {
+      return res.status(400).json({
+        error: 'Image tidak ditemukan'
+      });
+    }
+
+
+    try {
+      const { data, info } = await sharp(req.file.path)
+        .rotate()
+        .removeAlpha()
+        .toColourspace('srgb')
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+
+      imageTensor = tf.tensor3d(
+        data,
+        [info.height, info.width, info.channels],
+        'float32'
+      );
+
+      const expanded = imageTensor.expandDims(0);
+      const predictions = await model.classify(expanded);
+      expanded.dispose();
+
+      return res.json({
+        status: 'success',
+        predictions
+      });
+
+    } catch (error) {
+      return res.status(400).json({ error: 'Gagal memproses gambar. Pastikan file yang diunggah adalah gambar yang valid.', details: error.message });
+    }
+  }
+  catch (error) {
+    return res.status(500).json({ error: error.message });
+  } finally {
+    if (imageTensor) {
+      imageTensor.dispose();
+    }
+
+    if (req.file?.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Gagal menghapus file upload sementara:', unlinkError.message);
+      }
+    }
+  }
+});
+
+app.listen(env.EXPRESS_PORT, () => {
+  console.log(`API is running on http://localhost:${env.EXPRESS_PORT}`);
 });
