@@ -70,11 +70,22 @@ async function vt_detector(message, urlsToCheck) {
                 .attributes.stats;
 
 
-        if (stats.suspicious > 0) {
+        if (stats.suspicious > 0 || stats.malicious > 0) {
+            let score;
+
+            if (stats.malicious >= 3) {
+                score = 40;
+            } else {
+                score = stats.malicious * 10;
+            }
+
+            score += stats.suspicious * 2;
+
+            score = Math.min(100, score);
 
             return {
-                score: 5 * stats.suspicious,
-                reason: ['VT suspicious'],
+                score: score,
+                reason: ['VT suspicious', 'VT malicious'],
                 url: normalizedUrl
             };
         }
