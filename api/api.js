@@ -71,6 +71,11 @@ app.post("/scan", upload.single("image"), async (req, res) => {
         error: 'Image tidak ditemukan'
       });
     }
+    if (req.file.mimetype === "image/gif") {
+      return res.status(400).json({
+        error: "GIF tidak didukung"
+      });
+    }
 
 
     try {
