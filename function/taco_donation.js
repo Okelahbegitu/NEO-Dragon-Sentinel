@@ -10,6 +10,7 @@ const target_donation = require('../models/target_donation');
 
 const config = require("../models/config_tb");
 const env = require("../config/env");
+const { Component } = require("discord.js");
 
 async function tacoDonation(taco_data, client) {
     
@@ -89,7 +90,7 @@ async function tacoDonation(taco_data, client) {
     //kirim embed ke channel yang sudah di set
     if (donation_channel) {
         await client.channels.fetch(donation_channel.value)
-            .then(channel => channel.send({ embeds: [embed] }))
+            .then(channel => channel.send({ embeds: [embed], Components: [embeded_button] }))
             .catch(console.error);
     
         if (target_donation_res) {
