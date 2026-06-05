@@ -33,10 +33,10 @@ async function tacoDonation(taco_data, client) {
             { name: "💬 Message", value: taco_data.message || "No message provided", inline: true }
         )      .setColor(
             (target_donation_res != null && taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount) ? "#FFE066" :
-            (taco_data.amount >= 100000) ? "#2ECC71" :
-            (taco_data.amount >= 50000) ? "#00BFFF" :
-            (taco_data.amount >= 10000) ? "#FF8C00" :
-            "#D4AF37"
+            (taco_data.amount >= 100000) ? "#00BFFF" :
+            (taco_data.amount >= 50000) ? "#FF8C00" :
+            (taco_data.amount >= 10000) ? "#D4AF37" :
+            "#2ECC71"
         )
         .setImage(taco_data.gifUrl);
     
