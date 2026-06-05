@@ -18,6 +18,8 @@ module.exports = {
 
     async execute(message) {
         if (!message.guild) return;
+        // Cek apakah pesan memiliki attachment dan bukan dari bot 
+        if (message.author.bot) return;
 
         try {
             const medias = [...message.attachments.values()].filter(
