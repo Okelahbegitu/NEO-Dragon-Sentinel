@@ -1,6 +1,8 @@
 const {
     EmbedBuilder,
-    ActionRowBuilder
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle
 
 } = require("discord.js");
 
@@ -18,7 +20,7 @@ async function tacoDonation(taco_data, client) {
     
     const embed = new EmbedBuilder()
         .setTitle(
-            (taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount && target_donation_res) ? "🏆 Treasury Goal Reached" :
+            (target_donation_res != null && taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount) ? "🏆 Treasury Goal Reached" :
             (taco_data.amount >= 100000) ? "👑 Royal Tribute" : 
             (taco_data.amount >= 50000) ? "🔥 Grand Tribute" :
             (taco_data.amount >= 10000) ? "💎 Honored Tribute" :
@@ -30,7 +32,7 @@ async function tacoDonation(taco_data, client) {
             { name: "💰 Amount", value: `Rp ${taco_data.amount.toLocaleString()}`, inline: true },
             { name: "💬 Message", value: taco_data.message || "No message provided", inline: true }
         )      .setColor(
-            (taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount && target_donation_res) ? "#FFE066" :
+            (target_donation_res != null && taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount) ? "#FFE066" :
             (taco_data.amount >= 100000) ? "#2ECC71" :
             (taco_data.amount >= 50000) ? "#00BFFF" :
             (taco_data.amount >= 10000) ? "#FF8C00" :
