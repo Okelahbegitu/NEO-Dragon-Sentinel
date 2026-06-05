@@ -1,5 +1,6 @@
 const {
     EmbedBuilder,
+    ActionRowBuilder
 
 } = require("discord.js");
 
@@ -9,8 +10,15 @@ const config = require("../models/config_tb");
 const env = require("../config/env");
 
 async function tacoDonation(taco_data, client) {
+    
+
+    const embed_target_donation = new EmbedBuilder()
+
+    const target_donation_res = await target_donation.findOne({ where: { status: 'unreached' }, order: [['created_at', 'DESC']] });
+    
     const embed = new EmbedBuilder()
         .setTitle(
+            (taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount) ? "🏆 Treasury Goal Reached" :
             (taco_data.amount >= 100000) ? "👑 Royal Tribute" : 
             (taco_data.amount >= 50000) ? "🔥 Grand Tribute" :
             (taco_data.amount >= 10000) ? "💎 Honored Tribute" :
@@ -21,13 +29,23 @@ async function tacoDonation(taco_data, client) {
             { name: "👤 Donor", value: taco_data.gifterName || "Anonymous", inline: true },
             { name: "💰 Amount", value: `Rp ${taco_data.amount.toLocaleString()}`, inline: true },
             { name: "💬 Message", value: taco_data.message || "No message provided", inline: true }
-        )      .setColor("#912597")
+        )      .setColor(
+            (taco_data.amount + target_donation_res.current_amount >= target_donation_res.goal_amount) ? "#FFE066" :
+            (taco_data.amount >= 100000) ? "#2ECC71" :
+            (taco_data.amount >= 50000) ? "#00BFFF" :
+            (taco_data.amount >= 10000) ? "#FF8C00" :
+            "#D4AF37"
+        )
         .setImage(taco_data.gifUrl);
-
     
-    const embed_target_donation = new EmbedBuilder()
+    const embeded_button = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setLabel("Donasi")
+            .setStyle(ButtonStyle.Link)
+            .setURL(`https://tako.id/LordEndo/gift`)
+    );
+    
 
-    const target_donation_res = await target_donation.findOne({ where: { status: 'unreached' }, order: [['created_at', 'DESC']] });
 
     if (target_donation_res) {
         console.log(`Current amount before update: ${target_donation_res.current_amount}`);
@@ -59,7 +77,7 @@ async function tacoDonation(taco_data, client) {
                 { name: "💰 Current Amount", value: `Rp ${target_donation_res.current_amount.toLocaleString('id-ID')}`, inline: true },
                 { name: "📊 Progress", value: `${progress_bar} ${progress.toFixed(2)}%`, inline: false }
             )
-            .setColor("#912597");
+            .setColor("#ed37fa");
 
     }
 
@@ -72,7 +90,7 @@ async function tacoDonation(taco_data, client) {
             .then(channel => channel.send({ embeds: [embed] }))
             .catch(console.error);
     
-        if (target_donation) {
+        if (target_donation_res) {
             await client.channels.fetch(donation_channel.value)
                 .then(channel => channel.send({ embeds: [embed_target_donation] }))
                 .catch(console.error);

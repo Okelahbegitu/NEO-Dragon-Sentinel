@@ -35,7 +35,7 @@ module.exports = async function show_progress(interaction) {
                 { name: "💰 Current Amount", value: `Rp ${currentTarget.current_amount.toLocaleString('id-ID')}`, inline: true },
                 { name: "📊 Progress", value: `${progress_bar} ${progress.toFixed(2)}%`, inline: false }
             )
-            .setColor("#912597");
+            .setColor("#ed37fa");
         await interaction.reply({ embeds: [embed] });
     } catch (error) {
         console.error('Error fetching target:', error);
