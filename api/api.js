@@ -5,6 +5,13 @@ const tf = require("@tensorflow/tfjs");
 const fs = require("fs");
 const sharp = require("sharp");
 const env = require('../config/env');
+const tacoDonation = require('../function/taco_donation');
+
+
+const crypto = require("crypto");
+
+
+const target_donation = require('../models/target_donation');
 
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
@@ -27,7 +34,7 @@ let model;
 app.use(cors());
 app.use(express.json());
 
-app.get('/members/:guildId/:userId', async (req, res) => {
+app.get('/discord/members/:guildId/:userId', async (req, res) => {
   try {
     const { guildId, userId } = req.params;
 
@@ -119,6 +126,50 @@ app.post("/scan", upload.single("image"), async (req, res) => {
         console.error('Gagal menghapus file upload sementara:', unlinkError.message);
       }
     }
+  }
+});
+
+app.post('/webhook/tako', express.json(), async (req, res) => {
+  try {
+    console.log('Received taco donation webhook:', req.body);
+
+    const tako_signature = req.headers['x-tako-signature'];
+
+    if (!tako_signature) {
+      return res.status(401).json({ error: 'Missing signature' });
+    }
+
+    const compare_signature = crypto.createHmac("sha256", env.TAKO_WEBTOKEN)
+      .update(JSON.stringify(req.body))
+      .digest("hex");
+
+    const signatureBuffer = Buffer.from(String(tako_signature));
+    const compareBuffer = Buffer.from(compare_signature);
+
+    if (
+      signatureBuffer.length !== compareBuffer.length ||
+      !crypto.timingSafeEqual(signatureBuffer, compareBuffer)
+    ) {
+      console.warn('Invalid signature for taco donation webhook');
+      return res.status(401).json({ error: 'Invalid signature' });
+    }
+
+    await tacoDonation(req.body, client);
+    const target_donation_res = await target_donation.findOne({ where: { status: 'unreached' }, order: [['created_at', 'DESC']] });
+    if (target_donation_res) {
+      target_donation_res.current_amount += req.body.amount;
+      console.log(`Updated target donation: ${target_donation_res.current_amount}`);
+      if (target_donation_res.current_amount >= target_donation_res.goal_amount) {
+        target_donation_res.status = 'reached';
+      }
+
+      await target_donation_res.save();
+    }
+
+    return res.status(200).json({ message: 'Webhook received' });
+  } catch (error) {
+    console.error('Failed to handle taco donation webhook:', error);
+    return res.status(500).json({ error: 'Failed to handle webhook', details: error.message });
   }
 });
 

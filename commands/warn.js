@@ -57,7 +57,7 @@ async function giveWarn({
     .setDescription(`Kamu terkena peringatan ke: ${previousNotesCount}`)
     .addFields(
       { name: "Alasan:", value: reason, inline: true },
-      { name: "Oleh:", value: moderator.tag, inline: true }
+      { name: "Oleh:", value: moderator, inline: true }
     )
     .setColor("#FF0000")
     .setFooter({

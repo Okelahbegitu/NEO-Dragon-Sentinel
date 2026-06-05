@@ -4,6 +4,8 @@ const setupTrap = require("./setting/setuptrap");
 const setCooldown = require("./setting/cooldown");
 const welcomebye_channel = require("./setting/welcomebye_channel");
 const rule_channel = require("./setting/setrule_channel");
+const report_channel = require("./setting/report_channel");
+const { name } = require("./admintroll");
 
 module.exports = {
     name: "settingbot",
@@ -86,6 +88,19 @@ module.exports = {
                     required: true,
                 }
             ],
+        },
+        {
+            name: "report_channel",
+            description: "Atur channel untuk pesan pelanggaran, dan seleksi pelanggaran",
+            type: 1,
+            options: [
+                {
+                    name: "target_channel",
+                    description: "Pilih channel untuk pesan pelanggaran",
+                    type: 7,
+                    required: true,
+                }
+            ],
         }
     ],
     async execute(interaction) {
@@ -115,7 +130,9 @@ module.exports = {
             // Implementasi untuk setrule_channel
             return rule_channel(interaction);
         }
-
+        if (subcommand === "report_channel") {
+            return report_channel(interaction);
+        }
         return interaction.reply({
             content: "Subcommand tidak dikenal.",
             ephemeral: true,

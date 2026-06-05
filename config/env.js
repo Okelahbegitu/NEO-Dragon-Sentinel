@@ -31,11 +31,15 @@ module.exports = {
     EXPRESS_PORT: parseInt(process.env.EXPRESS_PORT || "3001"),
     API_URL: process.env.API_URL || `http://localhost:${process.env.EXPRESS_PORT || 3001}`,
 
+    OWNER_ID : process.env.OWNER_ID || "270503879714537492",
+
+    TAKO_WEBTOKEN: process.env.TAKO_WEBTOKEN,
+
     /**
      * Validation helper - tidak throw, cuma log warning
      */
     validate() {
-        const required = ['DISCORD_TOKEN', 'CLIENT_ID', 'DB_NAME'];
+        const required = ['DISCORD_TOKEN', 'CLIENT_ID', 'DB_NAME', 'TAKO_WEBTOKEN'];
         const missing = required.filter(key => !this[key]);
 
         if (missing.length > 0) {

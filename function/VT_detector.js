@@ -71,15 +71,11 @@ async function vt_detector(message, urlsToCheck) {
 
 
         if (stats.suspicious > 0 || stats.malicious > 0) {
-            let score;
+            let score = 0;
 
-            if (stats.malicious >= 3) {
-                score = 40;
-            } else {
-                score = stats.malicious * 10;
-            }
+            score += stats.malicious * 10;
 
-            score += stats.suspicious * 2;
+            score += stats.suspicious * 5;
 
             score = Math.min(100, score);
 
@@ -90,7 +86,6 @@ async function vt_detector(message, urlsToCheck) {
             };
         }
     }
-
     return {
         score: 0,
         reason: []

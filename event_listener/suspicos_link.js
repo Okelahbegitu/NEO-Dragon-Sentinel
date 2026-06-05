@@ -1,4 +1,4 @@
-const { Events, PermissionsBitField } = require("discord.js");
+const { Events, PermissionsBitField, EmbedBuilder } = require("discord.js");
 const config = require("../models/config_tb");
 const env = require("../config/env");
 const axios = require("axios");
@@ -11,6 +11,8 @@ const isBlacklisted = require("../function/domain_blacklist");
 const typo_detector = require("../function/typo_detector");
 const scam_keyword = require("../function/scam_keyword");
 const warn = require("../commands/warn");
+const report_channel = require("../commands/setting/report_channel");
+
 
 
 
@@ -32,6 +34,7 @@ module.exports = {
 
         const urls = extractUrls(message.content);
         if (urls.length === 0) return;
+        console.log(`Detected URLs in message: ${urls.join(', ')}`);
 
         for (const rawUrl of urls) {
             const normalizedUrl = normalizeUrl(rawUrl);
@@ -61,18 +64,37 @@ module.exports = {
             console.error(`Error checking URL ${urls}:`, error);
         }
 
-        if(total_score >= 10) {
+        if (total_score >= 10 && total_score < 20) {
             //hapus message
             await message.delete();
             //warn user
             warn.giveWarn(message.member, reasons.join('\n'), message.client);
-        } if (total_score >= 20) {
+
+        } if (total_score >= 20 && total_score < 30) {
             //hapus message
             await message.delete();
+            //timeout sehari
+            await message.member.timeout(24 * 60 * 60 * 1000, reasons.join('\n'));
 
+            // Implementasi untuk mengirim notifikasi ke staff
+            const embed = new EmbedBuilder()
+                .setTitle("Peringatan Suspicious Link Detected")
+                .setDescription(`User ${message.author.tag} (${message.author.id}) mengirim pesan dengan link yang mencurigakan.`)
+                .addFields(
+                    { name: "Konten Pesan", value: message.content },
+                    { name: "Alasan Deteksi", value: reasons.join('\n') },
+                    { name: "Total Skor", value: total_score.toString() }
+                )
+                .setColor("Red")
+                .setTimestamp();
+        } else if (total_score >= 30) {
+            //hapus message
+            await message.delete();
             //ban user
             await message.member.ban({ reason: reasons.join('\n') });
         }
+        console.log("Suspicious Link Detection loaded with point: " + total_score);
+
 
     }
 }
