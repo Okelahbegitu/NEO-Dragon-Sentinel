@@ -112,25 +112,24 @@ async function handleNSFW(
         files: [media.url]
     }).catch(console.error);
 
-    if (probability >= 50) {
-        await requestStaffConfirmation(
-            message,
-            media,
-            prediction,
-            probability
-        );
-    }
-    else if (probability >= 90) {
+    if (probability >= 90) {
         await message.member
             .kick(reason)
             .catch(console.error);
-    } else {
+    } else if (probability >= 80) {
         await message.member
             .timeout(
                 24 * 60 * 60 * 1000,
                 reason
             )
             .catch(console.error);
+    } else if (probability >= 50) {
+        await requestStaffConfirmation(
+            message,
+            media,
+            prediction,
+            probability
+        );
     }
 }
 
