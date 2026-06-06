@@ -116,19 +116,7 @@ async function handleNSFW(
         await message.member
             .kick(reason)
             .catch(console.error);
-    } else if (probability >= 80) {
-        await message.member
-            .timeout(
-                24 * 60 * 60 * 1000,
-                reason
-            )
-            .catch(console.error);
-        warn.giveWarn({
-            target: message.author,
-            moderator: "AutoMod",
-            reason
-        });
-    } else if (probability >= 65) {
+    }else if (probability >= 60) {
         await requestStaffConfirmation(
             message,
             media,
