@@ -123,7 +123,12 @@ async function handleNSFW(
                 reason
             )
             .catch(console.error);
-    } else if (probability >= 50) {
+        warn.giveWarn({
+            target: message.author,
+            moderator: "AutoMod",
+            reason
+        });
+    } else if (probability >= 65) {
         await requestStaffConfirmation(
             message,
             media,
