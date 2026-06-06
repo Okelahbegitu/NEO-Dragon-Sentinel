@@ -120,8 +120,7 @@ async function handleNSFW(
             probability
         );
     }
-
-    if (probability >= 90) {
+    else if (probability >= 90) {
         await message.member
             .kick(reason)
             .catch(console.error);

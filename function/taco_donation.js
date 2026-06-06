@@ -44,6 +44,8 @@ async function tacoDonation(taco_data, client) {
     const embeded_button = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setLabel("Donasi")
+            .setStyle(ButtonStyle.Link, ButtonStyle.Success)
+            .setEmoji("💰")
             .setStyle(ButtonStyle.Link)
             .setURL(`https://tako.id/LordEndo/gift`)
     );
@@ -90,7 +92,7 @@ async function tacoDonation(taco_data, client) {
     //kirim embed ke channel yang sudah di set
     if (donation_channel) {
         await client.channels.fetch(donation_channel.value)
-            .then(channel => channel.send({ embeds: [embed], Components: [embeded_button] }))
+            .then(channel => channel.send({ embeds: [embed], components: [embeded_button] }))
             .catch(console.error);
     
         if (target_donation_res) {
