@@ -14,6 +14,7 @@ module.exports = {
             const mediaLink = lintMedia(message.content);
             if (!mediaLink) return;
             message.channel.send(`[Sent by ${user.tag}](${mediaLink})`).catch(() => null);
+            message.delete().catch(() => null);
         }
         catch (error) {
             console.error(`Error processing media link for ${user.tag}:`, error);

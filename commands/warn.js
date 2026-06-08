@@ -52,12 +52,17 @@ async function giveWarn({
   });
 
   // Build warn embed and notify target via DM
+  const moderatorName =
+    typeof moderator === "string"
+      ? moderator
+      : moderator?.tag ?? moderator?.user?.tag ?? "Unknown";
+
   const warnEmbed = new EmbedBuilder()
     .setTitle("⚠️ Peringatan")
     .setDescription(`Kamu terkena peringatan ke: ${previousNotesCount}`)
     .addFields(
       { name: "Alasan:", value: reason, inline: true },
-      { name: "Oleh:", value: moderator, inline: true }
+      { name: "Oleh:", value: moderatorName, inline: true }
     )
     .setColor("#FF0000")
     .setFooter({
@@ -170,7 +175,7 @@ module.exports = {
     const result = await giveWarn({
       target,
       reason,
-      moderator: interaction.user,
+      moderator: interaction.user.tag,
       guildId: interaction.guildId,
       timeoutDuration: timeout_duration ?? 0,
     });

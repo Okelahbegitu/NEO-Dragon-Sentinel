@@ -40,7 +40,7 @@ module.exports = {
                     );
 
                     const isNSFW =
-                        probability >= 50 &&
+                        probability >= 70 &&
                         prediction.className !== "Neutral" &&
                         prediction.className !== "Drawing";
 
@@ -62,7 +62,11 @@ module.exports = {
                 error.response?.data || error.message
             );
         }
-    }
+    },
+
+    scanImage,
+    handleNSFW,
+    requestStaffConfirmation
 };
 
 async function scanImage(media) {
@@ -116,7 +120,7 @@ async function handleNSFW(
         await message.member
             .kick(reason)
             .catch(console.error);
-    }else if (probability >= 60) {
+    } else if (probability >= 70) {
         await requestStaffConfirmation(
             message,
             media,
@@ -130,9 +134,10 @@ async function requestStaffConfirmation(
     message,
     media,
     prediction,
-    probability
+    probability,
+    reportby = null
 ) {
-    const attachmentName = `SPOILER_${media.name || "nsfw-proof.jpg"}`;
+    const attachmentName = `SPOILER_${(media.name != null) ? media.name : "nsfw-proof.jpg"}`;
 
     const embed = new EmbedBuilder()
         .setTitle("Konten NSFW Terdeteksi")
@@ -143,11 +148,12 @@ async function requestStaffConfirmation(
         .addFields(
             {
                 name: "Kelas Prediksi",
-                value: prediction.className
+                value: (prediction?.className != null) ? prediction.className : `Di laporkan sebagai NSFW oleh <@${reportby}>`
             },
             {
                 name: "Probabilitas",
-                value: `${probability}%`
+                value: (probability != null) ? `${probability}%` : `Di laporkan sebagai NSFW oleh <@${reportby}>`
+
             }
         )
         .setThumbnail(`attachment://${attachmentName}`)
