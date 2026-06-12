@@ -1,29 +1,28 @@
 const level = require('../../models/level_tb');
-const puppeteer = require('puppeteer');
+const { renderLevelCard } = require('../../function/rank_card_renderer');
 
 
 
 module.exports = {
     name: "show_level",
     description: "Menampilkan level dan XP member",
-    options: [],
+    options: [
+        {
+            name: "user",
+            description: "Member yang ingin ditampilkan levelnya",
+            type: 6,
+            required: false,
+        },
+    ],
     async execute(interaction) {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        const fs = require("fs");
-
-        const path = require("path");
-
-        let html_card = await fs.promises.readFile(
-            path.join(__dirname, "../../assets/level_card.html"),
-            "utf8"
-        );
-
-
         const user_id =  interaction.options.getUser('user')?.id ?? interaction.user.id;
         const user_level_data = await level.findOne({ where: { username_id: user_id } });
 
-
+        const username = interaction.options.getUser('user')?.username ?? interaction.user.username;
+        let levelValue = 1;
+        let xpValue = 0;
+        let maxXp = 50;
+        let progress = 0;
 
         if (!user_level_data) {
             await level.create({
@@ -31,29 +30,22 @@ module.exports = {
                 level: 1,
                 xp: 0
             });
-            html_card = html_card.replace('{USERNAME}', interaction.options.getUser('user')?.username ?? interaction.user.username)
-                .replace('{LEVEL}', 1)
-                .replace('{XP}', 0)
-                .replaceAll('{PROGRESS}', 0)
-                .replace('{MAX_XP}', 50)
         } else {
+            levelValue = user_level_data.level;
+            xpValue = user_level_data.xp;
+            maxXp = 50 * user_level_data.level ** 2;
+            progress = Math.floor((user_level_data.xp / maxXp) * 100);
 
-            const maxs_xp = 50 * user_level_data.level ** 2;
-            const proggress = Math.floor((user_level_data.xp / maxs_xp) * 100);
-            html_card = html_card.replace('{USERNAME}', interaction.options.getUser('user')?.username ?? interaction.user.username)
-                .replace('{LEVEL}', user_level_data.level)
-                .replace('{XP}', user_level_data.xp)
-                .replaceAll('{PROGRESS}', proggress)
-                .replace('{MAX_XP}', maxs_xp)
-
-            console.log(user_level_data.xp, maxs_xp, proggress)
+            console.log(user_level_data.xp, maxXp, progress)
 
         }
-        await page.setContent(html_card)
-        const card = await page.$("#bg_card");
 
-        const image = await card.screenshot({
-            type: "png",
+        const image = await renderLevelCard({
+            username,
+            level: levelValue,
+            xp: xpValue,
+            maxXp,
+            progress,
         });
 
 
