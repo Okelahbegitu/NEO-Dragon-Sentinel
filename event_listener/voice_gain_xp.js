@@ -4,7 +4,7 @@ const add_xp = require("../function/add_xp");
 let XP_GAIN = 10;
 const XP_INTERVAL_MS = 5 * 60 * 1000; // 5 menit
 const TICK_MS = 60 * 1000;
-const MIN_NON_BOT_MEMBERS = 1;
+const MIN_NON_BOT_MEMBERS = 2;
 const SELF_DEAFEN_GAIN_XP = false;
 
 const voiceUsers = new Map();
