@@ -66,7 +66,7 @@ async function giveWarn({
     )
     .setColor("#FF0000")
     .setFooter({
-      text: "NEO Dragon Sentinel (Jika terdapat kekeliruan, lakukan aju banding di ticket)",
+      text: "Dragon Sentinel (Jika terdapat kekeliruan, lakukan aju banding di ticket)",
     });
 
   try {
@@ -181,7 +181,7 @@ module.exports = {
     });
 
     await interaction.reply({
-      content: `✅ Warn diberikan kepada ${target.user.tag}! Total: ${result.totalWarn}`
+      content: `✅ Warn diberikan kepada ${target.user.tag}! Total: ${result.totalWarn} dan dengan alasan: ${reason}`,
     });;
 
 

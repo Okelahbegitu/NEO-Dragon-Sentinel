@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank Card</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        #bg_card {
+            background-color: #30003A;
+        }
+
+        #progress_bar {
+            background-color: #D4D4D8;
+        }
+
+        #progress_fill {
+            background-color: #A855F7;
+        }
+
+        .card {
+            width: 800px;
+            background: #2e1065;
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .username {
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .level {
+            color: white;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .progress {
+            width: 100%;
+            height: 32px;
+            background: #cffafe;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .justify-between {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .justify-end {
+            display: flex;
+            justify-content: flex-end;
+        } 
+
+        .items-center {
+            display: flex;
+            align-items: center;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #a855f7;
+            width: {PROGRESS}%;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bg_card" class="card">
+        <h1 class="username">
+            {USERNAME}
+        </h1>
+
+        <h2 class="level">
+            Level {LEVEL}
+        </h2>
+
+        <div class="items-center" style="margin-top: 5px;">
+            <div id="progress_bar" class="progress">
+                <div id="progress_fill" class="progress-fill"></div>
+            </div>
+
+            <span class="level" style="margin-left: 10px;">
+                {PROGRESS}%
+            </span>
+        </div>
+
+        <div class="justify-end" style=" margin-top: 3px; ">
+            <span class="text-white text-lg">
+                {XP} / {MAX_XP} XP
+            </span>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.tailwindcss.com"></script>
+
+</html>

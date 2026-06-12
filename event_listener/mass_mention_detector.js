@@ -12,6 +12,8 @@ module.exports = {
         if (message.author.bot) return;
         if (!message.guild) return;
         if (whitelist_channels.has(message.channel.id)) return;
+        //kecualikan mod
+        if (message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) return;
 
         const mentions  =  message.mentions.users.size +
         message.mentions.roles.size +

@@ -24,7 +24,7 @@ module.exports = async function showAdminTroll(interaction) {
         .setDescription("Berikut adalah permissions yang dimiliki oleh admin untuk keperluan trolling:")
         .addFields(field)
         .setColor("#5865F2")
-        .setFooter({ text: "Dragon Sentinel NEO" });
+        .setFooter({ text: "Ender Bot" });
 
     return await interaction.reply({
         embeds: [text],

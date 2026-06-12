@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        #bg-leaderboard {
+            background-color: #22002E;
+            width: 100%;
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            gap: 20px;
+            padding-top: 20px;
+        }
+
+        .card {
+            width: min(1100px, 92vw);
+            height: 100%;
+            background: #4A0B5C;
+            box-shadow: 0 8px 0 #5B1370;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .card:hover {
+            background: #5B1370;
+        }
+
+        .card-first {
+            background-color: #F2C94C;
+            box-shadow: 0 8px 0 #D6A51A;
+        }
+
+
+        .card-second {
+            background-color: #B8B8C8;
+            box-shadow: 0 8px 0 #8E8E9B;
+        }
+
+        .card-third {
+            background-color: #B87333;
+            box-shadow: 0 8px 0 #8B5324;
+        }
+
+        .card-first .rank-text {
+            color: #1A1020;
+        }
+
+        .card-first .rank-subtext {
+            color: #4A3A00;
+        }
+
+        .card-second .rank-text {
+            color: #15151A;
+        }
+
+        .card-second .rank-subtext {
+            color: #4B4B5A;
+        }
+
+        .card-third .rank-text {
+            color: #1A0F08;
+        }
+
+        .card-third .rank-subtext {
+            color: #3A2410;
+        }
+
+        .card:not(.card-first):not(.card-second):not(.card-third) .rank-text {
+            color: #F5EFFF;
+        }
+
+        .card:not(.card-first):not(.card-second):not(.card-third) .rank-subtext {
+            color: #BFA7D8;
+        }
+
+        .rank-number {
+            color: #FFFFFF;
+            font-size: 4.5rem;
+        }
+
+        .rank-text {
+            color: #F5EFFF;
+            font-size: 4.4rem;
+        }
+
+        .rank-subtext {
+            color: #BFA7D8;
+            font-size: 4rem;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 10rem;
+            height: 10rem;
+            background-color: #15151A;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- leaderboard container -->
+    <div id="bg-leaderboard">
+        <div class="flex ">
+            <p class=" font-bold text-white" style="font-size: 5rem;">
+                Leaderboard Level
+
+            </p>
+        </div>
+        <div class="card card-first">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_1}" alt="Avatar" class="w-16 h-16 rounded-full avatar">
+                    <div>
+                        <h2 class="text-xl font-bold rank-text">{username_1}</h2>
+                        <p class="text-sm rank-subtext">Level {level_1}</p>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold rank-number ml-auto">
+                    #1
+                </p>
+            </div>
+        </div>
+
+        <div class="card card-second">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_2}" alt="Avatar" class="w-14 h-14 rounded-full avatar">
+                    <div>
+                        <h2 class="text-lg font-bold rank-text">{username_2}</h2>
+                        <p class="text-sm rank-subtext">Level {level_2}</p>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold rank-number ml-auto">
+                    #2
+                </p>
+            </div>
+        </div>
+
+        <div class="card card-third">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_3}" alt="Avatar" class="w-14 h-14 rounded-full avatar">
+                    <div>
+                        <h2 class="text-lg font-bold rank-text">{username_3}</h2>
+                        <p class="text-sm rank-subtext">Level {level_3}</p>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold rank-number ml-auto">
+                    #3
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_4}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_4}</h2>
+                        <p class="text-sm rank-subtext">Level {level_4}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#4</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_5}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_5}</h2>
+                        <p class="text-sm rank-subtext">Level {level_5}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#5</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_6}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_6}</h2>
+                        <p class="text-sm rank-subtext">Level {level_6}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#6</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_7}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_7}</h2>
+                        <p class="text-sm rank-subtext">Level {level_7}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#7</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_8}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_8}</h2>
+                        <p class="text-sm rank-subtext">Level {level_8}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#8</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_9}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_9}</h2>
+                        <p class="text-sm rank-subtext">Level {level_9}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#9</p>
+            </div>
+        </div>
+
+        <div class="card mb-10">
+            <div class="flex items-center justify-between gap-4 w-full">
+                <div class="flex w-full items-center gap-4">
+                    <img src="{user_avatar_url_10}" alt="Avatar" class="w-12 h-12 rounded-full avatar">
+                    <div>
+                        <h2 class="text-base font-bold rank-text">{username_10}</h2>
+                        <p class="text-sm rank-subtext">Level {level_10}</p>
+                    </div>
+                </div>
+                <p class="text-xl font-bold rank-number ml-auto">#10</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
