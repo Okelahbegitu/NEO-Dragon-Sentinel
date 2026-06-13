@@ -6,11 +6,12 @@ module.exports = {
     name: "add_xp",
     description: "Tambah XP untuk user tertentu",
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
+
         try {
             if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: "Kamu tidak punya izin untuk menggunakan perintah ini.",
-                    ephemeral: true,
                 });
                 return;
             }
@@ -19,14 +20,17 @@ module.exports = {
             const gain_xp = interaction.options.getInteger("amount");
 
             if (!member) {
-                await interaction.reply({ content: "User tidak ditemukan.", ephemeral: true });
+                await interaction.editReply({ content: "User tidak ditemukan." });
                 return;
             }
 
-            if (member.user.bot) return;
+            if (member.user.bot) {
+                await interaction.editReply({ content: "Bot tidak bisa diberi XP." });
+                return;
+            }
 
             if (gain_xp === null) {
-                await interaction.reply({ content: "XP tidak valid.", ephemeral: true });
+                await interaction.editReply({ content: "XP tidak valid." });
                 return;
             }
 
@@ -34,18 +38,21 @@ module.exports = {
             const user_level_data = updatedUserData ?? await level_tb.findOne({ where: { username_id: member.id } });
 
             if (!user_level_data) {
-                await interaction.reply({ content: "Data user tidak ditemukan.", ephemeral: true });
+                await interaction.editReply({ content: "Data user tidak ditemukan." });
                 return;
             }
 
             console.log(`Admin added ${gain_xp} XP to user ${member.user.username}. Total XP: ${user_level_data.xp}, Level: ${user_level_data.level}`);
-            await interaction.reply({
+            await interaction.editReply({
                 content: `✅ Berhasil menambahkan ${gain_xp} XP untuk ${member.user.username}. Total XP sekarang: ${user_level_data.xp}, Level: ${user_level_data.level}`,
-                ephemeral: true,
             });
         } catch (error) {
             console.error("Error occurred while adding experience:", error);
-            await interaction.reply({ content: "Terjadi kesalahan saat menambahkan XP.", ephemeral: true });
+            if (interaction.deferred || interaction.replied) {
+                await interaction.editReply({ content: "Terjadi kesalahan saat menambahkan XP." });
+            } else {
+                await interaction.reply({ content: "Terjadi kesalahan saat menambahkan XP.", ephemeral: true });
+            }
         }
     }
 }
