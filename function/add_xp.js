@@ -19,14 +19,19 @@ async function add_xp(userOrMember, gain_xp) {
 
                 if (member) {
                     if (user_level_data.level >= 100) {
+                        console.log(`[add_xp] trying to add role 1032920319113052161 to ${user.id} at level ${user_level_data.level}`);
                         await member.roles.add("1032920319113052161").catch(() => null);
                     } else if (user_level_data.level >= 75) {
+                        console.log(`[add_xp] trying to add role 1487271663413231737 to ${user.id} at level ${user_level_data.level}`);
                         await member.roles.add("1487271663413231737").catch(() => null);
                     } else if (user_level_data.level >= 50) {
+                        console.log(`[add_xp] trying to add role 1487271507938775200 to ${user.id} at level ${user_level_data.level}`);
                         await member.roles.add("1487271507938775200").catch(() => null);
                     } else if (user_level_data.level >= 25) {
+                        console.log(`[add_xp] trying to add role 1487271274597191851 to ${user.id} at level ${user_level_data.level}`);
                         await member.roles.add("1487271274597191851").catch(() => null);
                     } else if (user_level_data.level >= 5) {
+                        console.log(`[add_xp] trying to add role 1487271116102701229 to ${user.id} at level ${user_level_data.level}`);
                         await member.roles.add("1487271116102701229").catch(() => null);
                     }
                 }
@@ -41,22 +46,27 @@ async function add_xp(userOrMember, gain_xp) {
 
                 if (member) {
                     if (user_level_data.level < 100) {
-                        await member.roles.remove("1032920319113052161").catch(() => null);
+                        console.log(`[add_xp] trying to remove role 1487271946252193952 from ${user.id} at level ${user_level_data.level}`);
+                        await member.roles.remove("1487271946252193952").catch(() => null);
                     }
 
                     if (user_level_data.level < 75) {
+                        console.log(`[add_xp] trying to remove role 1487271663413231737 from ${user.id} at level ${user_level_data.level}`);
                         await member.roles.remove("1487271663413231737").catch(() => null);
                     }
 
                     if (user_level_data.level < 50) {
+                        console.log(`[add_xp] trying to remove role 1487271507938775200 from ${user.id} at level ${user_level_data.level}`);
                         await member.roles.remove("1487271507938775200").catch(() => null);
                     }
 
                     if (user_level_data.level < 25) {
+                        console.log(`[add_xp] trying to remove role 1487271274597191851 from ${user.id} at level ${user_level_data.level}`);
                         await member.roles.remove("1487271274597191851").catch(() => null);
                     }
 
                     if (user_level_data.level < 5) {
+                        console.log(`[add_xp] trying to remove role 1487271116102701229 from ${user.id} at level ${user_level_data.level}`);
                         await member.roles.remove("1487271116102701229").catch(() => null);
                     }
                 }
