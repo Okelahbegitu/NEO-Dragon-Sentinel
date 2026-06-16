@@ -36,7 +36,9 @@ module.exports = {
                 gain_xp *= 2;
             }
 
-            await add_xp(message.member, gain_xp);
+            await add_xp(message.member, gain_xp, message.client);
+
+
             console.log(`User ${user.username} gained ${gain_xp} XP.`);
 
         } catch (error) {

@@ -49,8 +49,12 @@ module.exports = {
         });
 
 
-        await interaction.reply({
-            files: [{ attachment: await image, name: 'level_card.png' }],
-        });
+        const filePayload = { files: [{ attachment: await image, name: 'level_card.png' }] };
+
+        if (interaction.deferred || interaction.replied) {
+            await interaction.editReply(filePayload);
+        } else {
+            await interaction.reply(filePayload);
+        }
     }
 };

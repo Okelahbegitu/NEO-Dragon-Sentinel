@@ -34,17 +34,21 @@ module.exports = {
                 return;
             }
 
-            const updatedUserData = await add_xp(member, gain_xp);
-            const user_level_data = updatedUserData ?? await level_tb.findOne({ where: { username_id: member.id } });
+            const result = await add_xp(member, gain_xp, interaction.client);
+            const user_level_data = result?.user_level_data ?? await level_tb.findOne({ where: { username_id: member.id } });
 
             if (!user_level_data) {
                 await interaction.editReply({ content: "Data user tidak ditemukan." });
                 return;
             }
 
+            const levelUpNotice = result?.leveledUp
+                ? `\n🎉 ${member.user.username} naik ${result.levelUps} level ke level ${user_level_data.level}!`
+                : "";
+
             console.log(`Admin added ${gain_xp} XP to user ${member.user.username}. Total XP: ${user_level_data.xp}, Level: ${user_level_data.level}`);
             await interaction.editReply({
-                content: `✅ Berhasil menambahkan ${gain_xp} XP untuk ${member.user.username}. Total XP sekarang: ${user_level_data.xp}, Level: ${user_level_data.level}`,
+                content: `✅ Berhasil menambahkan ${gain_xp} XP untuk ${member.user.username}. Total XP sekarang: ${user_level_data.xp}, Level: ${user_level_data.level}${levelUpNotice}`,
             });
         } catch (error) {
             console.error("Error occurred while adding experience:", error);

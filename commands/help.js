@@ -28,6 +28,11 @@ module.exports = {
                         .setStyle(ButtonStyle.Primary)
                         .setDisabled(current_page === "general_commands"),
                     new ButtonBuilder()
+                        .setCustomId("prefix_commands")
+                        .setLabel("✒️ Prefix Command")
+                        .setStyle(ButtonStyle.Primary)
+                        .setDisabled(current_page === "prefix_commands"),
+                    new ButtonBuilder()
                         .setCustomId("settings_commands")
                         .setLabel("⚙️ Pengaturan")
                         .setStyle(ButtonStyle.Primary)
@@ -43,8 +48,13 @@ module.exports = {
                     { name: "🏡 Home", value: "Halaman utama dengan daftar kategori perintah" },
                     { name: "👑 Mods", value: "Perintah untuk moderator" },
                     { name: "⚡ General", value: "Perintah umum" },
+                    { name: "✒️ Prefix Command", value: "Perintah cepat digunakan dengan prefiks ! untuk disaat cepat" },
                     { name: "⚙️ Pengaturan", value: "Perintah untuk mengatur bot sesuai kebutuhan server (Role tinggi sahaja)" },
                     { name: "📌 Cara Menggunakan", value: "Klik tombol di bawah untuk melihat perintah dalam kategori tertentu." }
+                    
+                )
+                .addFields(
+                    { name: "📌 Catatan", value: "Beberapa perintah dengan simbol  mungkin memerlukan izin tertentu untuk digunakan. Pastikan kamu memiliki izin yang diperlukan untuk menggunakan perintah tersebut." },
                 )
                 .setColor("#5865F2")
                 .setFooter({ text: "EnderBot" });
@@ -67,7 +77,10 @@ module.exports = {
                 .addFields(
                     { name: "🏓 Ping", value: "`/ping` - Cek koneksi bot" },
                     { name: "📚 Help", value: "`/help` - Menampilkan daftar perintah" },
-                    { name: "📝 Crime Note Show", value: "`/crimenote show` - Menampilkan catatan kriminal/warn" }
+                    { name: "📝 Crime Note Show", value: "`/crimenote show` - Menampilkan catatan kriminal/warn" },
+                    { name: "📈 Level show_level", value: "`/level show_level` - Menampilkan level dan XP member" },
+                    { name: "👑 Level show_leaderboard", value: "`/level show_leaderboard` - Menampilkan leaderboard level member" },
+                    { name: "💴 Donation show_target", value: "`/donation show_target` - Menampilkan target donasi" }
                 )
                 .setColor("#5865F2")
                 .setFooter({ text: "EnderBot" });

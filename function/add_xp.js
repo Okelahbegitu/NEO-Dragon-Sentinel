@@ -1,11 +1,14 @@
 const level_tb = require("../models/level_tb");
-async function add_xp(userOrMember, gain_xp) {
+
+async function add_xp(userOrMember, gain_xp, client = null) {
     try {
         const user = userOrMember.user ?? userOrMember;
         const member = userOrMember.roles ? userOrMember : null;
 
         const [user_level_data] = await level_tb.findOrCreate({ where: { username_id: user.id }, defaults: { username_id: user.id, level: 1, xp: 0 } });
+        const previousLevel = user_level_data.level;
         user_level_data.xp += gain_xp;
+        let levelUps = 0;
 
         let max_xp = 50 * user_level_data.level ** 2;
 
@@ -13,6 +16,7 @@ async function add_xp(userOrMember, gain_xp) {
             while (user_level_data.xp >= max_xp) {
                 user_level_data.xp -= max_xp;
                 user_level_data.level++;
+                levelUps += 1;
                 max_xp = 50 * user_level_data.level ** 2;
 
                 //kasih role sesuai level
@@ -35,7 +39,6 @@ async function add_xp(userOrMember, gain_xp) {
                         await member.roles.add("1487271116102701229").catch(() => null);
                     }
                 }
-
             }
         } else if (gain_xp < 0) {
             while (user_level_data.xp < 0 && user_level_data.level > 1) {
@@ -81,8 +84,26 @@ async function add_xp(userOrMember, gain_xp) {
 
 
         await user_level_data.save();
+
+        if (client && levelUps > 0) {
+            client.channels.fetch("1033321345037123604").then((channel) => {
+                if (!channel?.send) return;
+
+                channel.send(`🎉 <@${user.id}> naik ${levelUps} level dan sekarang level ${user_level_data.level}!`);
+            }).catch((err) => {
+                console.error("Error fetching channel for level up announcement:", err);
+            });
+        }
+
+        return {
+            user_level_data,
+            leveledUp: levelUps > 0,
+            levelUps,
+            previousLevel,
+        };
     } catch (error) {
         console.error("Error adding XP:", error);
+        return null;
     }
 }
 
