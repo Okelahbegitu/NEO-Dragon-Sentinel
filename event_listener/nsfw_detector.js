@@ -13,47 +13,42 @@ const config = require("../models/config_tb");
 const warn = require("../commands/warn");
 const env = require("../config/env");
 
+// Threshold deteksi NSFW per kelas
+const THRESHOLDS = {
+    Hentai: 0.95,
+    Sexy: 0.85,
+    Porn: 0.90
+};
+
 module.exports = {
     name: Events.MessageCreate,
 
     async execute(message) {
         if (!message.guild) return;
-        // Cek apakah pesan memiliki attachment dan bukan dari bot 
         if (message.author.bot) return;
 
         try {
             const medias = [...message.attachments.values()].filter(
-                attachment =>
-                    attachment.contentType?.startsWith("image/")
+                attachment => attachment.contentType?.startsWith("image/")
             );
 
             if (!medias.length) return;
 
             for (const media of medias) {
-                const predictions = await scanImage(media);
+                // Download buffer sekali, dipakai untuk scan + DM + report
+                const buffer = await downloadAttachment(media.url);
+                const predictions = await scanImage(media, buffer);
 
                 console.log(predictions);
 
-                for (const prediction of predictions) {
-                    const probability = Math.round(
-                        prediction.probability * 100
-                    );
+                const detected = predictions.find(prediction =>
+                    THRESHOLDS[prediction.className] !== undefined &&
+                    prediction.probability > THRESHOLDS[prediction.className]
+                );
 
-                    const isNSFW =
-                        probability >= 70 &&
-                        prediction.className !== "Neutral" &&
-                        prediction.className !== "Drawing";
-
-                    if (!isNSFW) continue;
-
-                    await handleNSFW(
-                        message,
-                        media,
-                        prediction,
-                        probability
-                    );
-
-                    return;
+                if (detected) {
+                    await handleNSFW(message, media, buffer, detected);
+                    return; // stop setelah ketemu 1 attachment NSFW
                 }
             }
         } catch (error) {
@@ -69,75 +64,50 @@ module.exports = {
     requestStaffConfirmation
 };
 
-async function scanImage(media) {
-    const imageResponse = await axios.get(media.url, {
+async function downloadAttachment(url) {
+    const imageResponse = await axios.get(url, {
         responseType: "arraybuffer"
     });
+    return Buffer.from(imageResponse.data);
+}
 
+async function scanImage(media, buffer) {
     const formData = new FormData();
 
-    formData.append(
-        "image",
-        Buffer.from(imageResponse.data),
-        {
-            filename: media.name || "image.jpg",
-            contentType: media.contentType
-        }
-    );
+    formData.append("image", buffer, {
+        filename: media.name || "image.jpg",
+        contentType: media.contentType
+    });
 
     const response = await axios.post(
         `${env.API_URL}/scan`,
         formData,
-        {
-            headers: formData.getHeaders()
-        }
+        { headers: formData.getHeaders() }
     );
 
     return response.data.predictions;
 }
 
-async function handleNSFW(
-    message,
-    media,
-    prediction,
-    probability
-) {
-    const reason =
-        `Mengirim konten NSFW (${prediction.className} ` +
-        `dengan probabilitas ${probability}%)`;
+async function handleNSFW(message, media, buffer, prediction) {
+    const reason = `Mengirim konten NSFW (${prediction.className} ${(prediction.probability * 100).toFixed(2)}%)`;
+    const fileName = media.name || "nsfw-proof.jpg";
+
     await message.delete().catch(console.error);
 
-    message.author.send({
+    await message.author.send({
         content:
-            `Pesan kamu telah dihapus karena terdeteksi ` +
-            `mengandung konten NSFW.\nAlasan: ${reason} ` +
-            `Pesan mu dalam peninjauan staff dan akan dipulihkan jika ternyata ` +
-            `bukan NSFW.`,
-        files: [media.url]
+            `Pesan kamu telah dihapus karena terdeteksi mengandung konten NSFW.\n` +
+            `Alasan: ${reason}\n` +
+            `Pesan mu dalam peninjauan staff dan akan dipulihkan jika ternyata bukan NSFW.`,
+        files: [{ attachment: buffer, name: fileName }]
     }).catch(console.error);
 
-    if (probability >= 90) {
-        await message.member
-            .kick(reason)
-            .catch(console.error);
-    } else if (probability >= 70) {
-        await requestStaffConfirmation(
-            message,
-            media,
-            prediction,
-            probability
-        );
-    }
+    await requestStaffConfirmation(message, media, buffer, prediction);
 }
 
-async function requestStaffConfirmation(
-    message,
-    media,
-    prediction,
-    probability,
-    reportby = null
-) {
-    const attachmentName = `SPOILER_${(media.name != null) ? media.name : "nsfw-proof.jpg"}`;
+async function requestStaffConfirmation(message, media, buffer, prediction) {
+    const fileName = media.name || "nsfw-proof.jpg";
+    const attachmentName = `SPOILER_${fileName}`;
 
     const embed = new EmbedBuilder()
         .setTitle("Konten NSFW Terdeteksi")
@@ -148,12 +118,13 @@ async function requestStaffConfirmation(
         .addFields(
             {
                 name: "Kelas Prediksi",
-                value: (prediction?.className != null) ? prediction.className : `Di laporkan sebagai NSFW oleh <@${reportby}>`
+                value: `**${prediction.className}**`,
+                inline: true
             },
             {
                 name: "Probabilitas",
-                value: (probability != null) ? `${probability}%` : `Di laporkan sebagai NSFW oleh <@${reportby}>`
-
+                value: `${(prediction.probability * 100).toFixed(2)}%`,
+                inline: true
             }
         )
         .setThumbnail(`attachment://${attachmentName}`)
@@ -182,9 +153,7 @@ async function requestStaffConfirmation(
         return;
     }
 
-    const channel = await message.guild.channels.fetch(
-        reportChannelConfig.value
-    );
+    const channel = await message.guild.channels.fetch(reportChannelConfig.value);
 
     if (!channel?.send) {
         console.error("Report channel not found or not sendable");
@@ -194,60 +163,40 @@ async function requestStaffConfirmation(
     const reviewMessage = await channel.send({
         embeds: [embed],
         components: [buttons],
-        files: [
-            {
-                attachment: media.url,
-                name: attachmentName
-            }
-        ]
+        files: [{ attachment: buffer, name: attachmentName }]
     });
 
-    const collector =
-        reviewMessage.createMessageComponentCollector({
-            filter: interaction =>
-                interaction.customId ===
-                `confirm_nsfw_${message.id}` ||
-                interaction.customId ===
-                `deny_nsfw_${message.id}`,
-
-            time: 24 * 60 * 60 * 1000
-        });
+    const collector = reviewMessage.createMessageComponentCollector({
+        filter: interaction =>
+            interaction.customId === `confirm_nsfw_${message.id}` ||
+            interaction.customId === `deny_nsfw_${message.id}`,
+        time: 24 * 60 * 60 * 1000
+    });
 
     collector.on("collect", async interaction => {
-        if (
-            interaction.customId ===
-            `confirm_nsfw_${message.id}`
-        ) {
-            await interaction.update({
-                content:
-                    "Konten telah dikonfirmasi sebagai NSFW.",
-                embeds: [],
-                components: []
-            });
-
-            await warn.giveWarn({
-                target: message.author,
-                moderator: interaction.user.tag,
-                reason:
-                    `Konten NSFW dikonfirmasi staff ` +
-                    `(${prediction.className} - ${probability}%)`
-            });
-
-            return;
-        }
+        const isConfirm = interaction.customId === `confirm_nsfw_${message.id}`;
 
         await interaction.update({
-            content:
-                "Konten dikonfirmasi bukan NSFW.",
+            content: isConfirm
+                ? "Konten telah dikonfirmasi sebagai NSFW."
+                : "Konten dikonfirmasi bukan NSFW.",
             embeds: [],
             components: []
         });
 
+        if (isConfirm) {
+            await warn.giveWarn({
+                target: message.author,
+                moderator: interaction.user.tag,
+                reason: `Konten NSFW dikonfirmasi staff (${(prediction.probability * 100).toFixed(2)}%)`,
+                message: message
+            });
+            return;
+        }
+
         await message.channel.send({
-            content:
-                `${message.author}, pesan kamu ` +
-                `telah dipulihkan karena bukan NSFW.`,
-            files: [media.url]
+            content: `${message.author}, pesan kamu telah dipulihkan karena bukan NSFW.`,
+            files: [{ attachment: buffer, name: fileName }]
         });
     });
 }
