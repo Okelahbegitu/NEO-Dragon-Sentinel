@@ -7,6 +7,8 @@ const sharp = require("sharp");
 const env = require('../config/env');
 const tacoDonation = require('../function/taco_donation');
 
+const alterScan = require('../function/scan_alter');
+
 
 const crypto = require("crypto");
 
@@ -129,6 +131,14 @@ app.post("/scan", upload.single("image"), async (req, res) => {
   }
 });
 
+app.post('/scan-alter', upload.single("image"), async (req, res) => {
+  try {
+    await alterScan(req, res);
+  }catch (error) {
+    console.error('Error in /scan-alter route:', error);
+    return res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.', details: error.message });
+  }
+});
 app.post('/webhook/tako', express.json(), async (req, res) => {
   try {
     console.log('Received taco donation webhook:', req.body);
