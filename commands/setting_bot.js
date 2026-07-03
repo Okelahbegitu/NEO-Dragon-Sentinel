@@ -107,19 +107,19 @@ module.exports = {
         const subcommand = interaction.options.getSubcommand();
 
         if (subcommand === "filterlink") {
-            return filterLink(interaction);
+            return await filterLink(interaction);
         }
 
         if (subcommand === "setchannellog") {
-            return setChannelLog(interaction);
+            return await setChannelLog(interaction);
         }
 
         if (subcommand === "setuptrap") {
-            return setupTrap(interaction);
+            return await setupTrap(interaction);
         }
 
         if (subcommand === "cooldown") {
-            return setCooldown(interaction);
+            return await setCooldown(interaction);
         }
 
         if (subcommand === "welcomebyechannel") {
@@ -127,12 +127,13 @@ module.exports = {
         }
 
         if (subcommand === "setrule_channel") {
-            // Implementasi untuk setrule_channel
-            return rule_channel(interaction);
+            return await rule_channel(interaction);
         }
+
         if (subcommand === "report_channel") {
-            return report_channel(interaction);
+            return await report_channel(interaction);
         }
+
         return interaction.reply({
             content: "Subcommand tidak dikenal.",
             ephemeral: true,
