@@ -24,8 +24,36 @@ const client = require('../index');
 
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
 let model;
+
+function removeTempFile(filePath) {
+  if (!filePath) return;
+
+  try {
+    fs.unlinkSync(filePath);
+  } catch (error) {
+    console.error('Gagal menghapus file upload sementara:', error.message);
+  }
+}
+
+function isValidWebhookSignature(payload, signature) {
+  if (!signature) {
+    return false;
+  }
+
+  const expectedSignature = crypto.createHmac('sha256', env.TAKO_WEBTOKEN)
+    .update(JSON.stringify(payload))
+    .digest('hex');
+
+  const signatureBuffer = Buffer.from(String(signature));
+  const expectedBuffer = Buffer.from(expectedSignature);
+
+  return (
+    signatureBuffer.length === expectedBuffer.length
+    && crypto.timingSafeEqual(signatureBuffer, expectedBuffer)
+  );
+}
 
 (async () => {
   console.log('Loading NSFW model...');
@@ -121,13 +149,7 @@ app.post("/scan", upload.single("image"), async (req, res) => {
       imageTensor.dispose();
     }
 
-    if (req.file?.path) {
-      try {
-        fs.unlinkSync(req.file.path);
-      } catch (unlinkError) {
-        console.error('Gagal menghapus file upload sementara:', unlinkError.message);
-      }
-    }
+    removeTempFile(req.file?.path);
   }
 });
 
@@ -139,7 +161,7 @@ app.post('/scan-alter', upload.single("image"), async (req, res) => {
     return res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.', details: error.message });
   }
 });
-app.post('/webhook/tako', express.json(), async (req, res) => {
+app.post('/webhook/tako', async (req, res) => {
   try {
     console.log('Received taco donation webhook:', req.body);
 
@@ -149,17 +171,7 @@ app.post('/webhook/tako', express.json(), async (req, res) => {
       return res.status(401).json({ error: 'Missing signature' });
     }
 
-    const compare_signature = crypto.createHmac("sha256", env.TAKO_WEBTOKEN)
-      .update(JSON.stringify(req.body))
-      .digest("hex");
-
-    const signatureBuffer = Buffer.from(String(tako_signature));
-    const compareBuffer = Buffer.from(compare_signature);
-
-    if (
-      signatureBuffer.length !== compareBuffer.length ||
-      !crypto.timingSafeEqual(signatureBuffer, compareBuffer)
-    ) {
+    if (!isValidWebhookSignature(req.body, tako_signature)) {
       console.warn('Invalid signature for taco donation webhook');
       return res.status(401).json({ error: 'Invalid signature' });
     }

@@ -96,9 +96,19 @@ async function tacoDonation(taco_data, client) {
             .catch(console.error);
     
         if (target_donation_res) {
+
+            //hanya muncul kalau menambah donasi dan jadi totalnya 25%, 50%, 75%, dan 100% dari target donasi
+            const previousProgress = Math.floor((target_donation_res.current_amount / target_donation_res.goal_amount) * 100);
+            const newProgress = Math.floor(((target_donation_res.current_amount + taco_data.amount) / target_donation_res.goal_amount) * 100);
+
+            if ((previousProgress < 25 && newProgress >= 25) ||
+                (previousProgress < 50 && newProgress >= 50) ||
+                (previousProgress < 75 && newProgress >= 75) ||
+                (previousProgress < 100 && newProgress >= 100)) {
             await client.channels.fetch(donation_channel.value)
                 .then(channel => channel.send({ embeds: [embed_target_donation] }))
                 .catch(console.error);
+            }
         }
 
     } else {
