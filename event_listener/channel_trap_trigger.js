@@ -58,7 +58,8 @@ module.exports = {
 
             // Ban user dengan alasan yang jelas
             await message.guild.members.ban(user.id, {
-                reason: "Activity detected in trap channel - suspected compromised account/spam bot"
+                reason: "Activity detected in trap channel - suspected compromised account/spam bot",
+                deleteMessageSeconds: 60 * 60 * 24 * 7
             });
 
             console.log(`User ${user.tag} has been banned for trap channel activity.`);
