@@ -2,7 +2,7 @@ const warn = require('../commands/warn');
 const cache = new Map();
 
 // Pesan dihitung dalam jendela waktu tertentu, bukan dihitung selamanya.
-const SPAM_WINDOW_MS = 5_000;
+const SPAM_WINDOW_MS = 1_500;
 // Kalau 5 pesan masuk sangat cepat, user dianggap spam.
 const SPAM_THRESHOLD = 5;
 // Riwayat spam disimpan 24 jam supaya repeat spam bisa dilacak.
