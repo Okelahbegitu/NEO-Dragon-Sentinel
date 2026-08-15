@@ -9,6 +9,7 @@ cron.schedule("0 0 1 * *", async () => {
             { amount: 0 },
             { where: {} }
         );
+        console.log("[SCHEDULER] Top chat has been reset successfully.");
     }
     catch (err) {
         console.error("[SCHEDULER] Failed to reset top chat:", err.message);

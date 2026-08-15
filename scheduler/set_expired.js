@@ -18,6 +18,7 @@ cron.schedule("0 0 * * *", async () => {
                 }
             }
         );
+        console.log("[SCHEDULER] Crime notes have been expired successfully."); 
     } catch (err) {
         console.error("[SCHEDULER] Failed to expire crime notes:", err.message);
     }

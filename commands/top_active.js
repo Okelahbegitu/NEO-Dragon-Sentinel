@@ -19,7 +19,7 @@ module.exports = {
         });
 
         const embed = new EmbedBuilder()
-            .setTitle('Top 10 User Paling ~~Pengganguran~~ Aktif Chat')
+            .setTitle('# Top 10 User Paling Aktif Chat 🏆')
             .setDescription('Berikut adalah daftar user yang paling aktif chat di server ini:')
             .addFields(
                 topUsers.map((user, index) => ({
@@ -29,7 +29,7 @@ module.exports = {
                 }))
             )
             .setFooter({
-                text: 'Akan direset setiap tanggal 1 dan chat yang di channel tertentu tidak dihitung'
+                text: 'Akan direset setiap tanggal 1 dan cha di channel tertentu tidak dihitung'
             })
             .setColor('#f13efe');
 
