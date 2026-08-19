@@ -78,7 +78,7 @@ app.use(cors({
   ],
 }));
 app.use(express.json());
-/*
+
 app.get('/discord/members/:guildId/:userId', async (req, res) => {
   try {
     const { guildId, userId } = req.params;
@@ -176,7 +176,7 @@ app.post('/scan-alter', upload.single("image"), async (req, res) => {
     return res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.', details: error.message });
   }
 });
-/*
+
 app.post('/webhook/tako', async (req, res) => {
   try {
     console.log('Received taco donation webhook:', req.body);
@@ -210,7 +210,7 @@ app.post('/webhook/tako', async (req, res) => {
     return res.status(500).json({ error: 'Failed to handle webhook', details: error.message });
   }
 });
-*/
+
 
 
 
@@ -309,8 +309,3 @@ app.post(
 app.listen(env.EXPRESS_PORT, () => {
   console.log(`API is running on http://localhost:${env.EXPRESS_PORT}`);
 });
-
-
-
-
-
