@@ -1,6 +1,10 @@
 ﻿const tb = require('../models/top_chat');
 
-const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
+
+
+
+const config_tb = require('../models/config_tb');
+const { EmbedBuilder, AttachmentBuilder, RoleFlagsBitField, UserFlagsBitField } = require('discord.js');
 const path = require('path');
 
 const thumbnail = new AttachmentBuilder(
@@ -18,11 +22,33 @@ const banner = new AttachmentBuilder(
 const emnoji_numnber = ['🥇', '🥈', '🥉', '#4', '#5', '#6', '#7', '#8', '#9', '#10'];
 
 module.exports = {
-    name: 'top_active',
+    name: 'set_active_leaderboard',
     description: 'Menampilkan daftar user yang paling aktif chat di server.',
     async execute(interaction) {
 
         await interaction.deferReply();
+
+        //cek apakah user memiliki role admin
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+        if (!member.permissions.has('Administrator')) {
+            return interaction.editReply({
+                content: 'Kamu tidak memiliki izin untuk menggunakan perintah ini.',
+                ephemeral: true
+            });
+        }
+
+        let id_embeded = await config_tb.findOne({
+            where: {
+                key_name: 'active_leaderboard'
+            }
+        });
+
+        
+
+
+
+
+
 
         const topUsers = await tb.findAll({
             order: [['amount', 'DESC']],
@@ -44,9 +70,20 @@ module.exports = {
                 text: 'Akan direset setiap tanggal 1'
             })
             .setColor('#f13efe')
-        await interaction.editReply({
+        const embeded_message = await interaction.editReply({
             embeds: [embed],
             files: [thumbnail],
+        });
+
+
+        await config_tb.upsert({
+            key_name: 'active_chat_leaderboard_embeded_id',
+            value: embeded_message.id,
+        });
+
+        await config_tb.upsert({
+            key_name: 'active_chat_leaderboard_channel_id',
+            value: interaction.channelId,
         });
     }
 

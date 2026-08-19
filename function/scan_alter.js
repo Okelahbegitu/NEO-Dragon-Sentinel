@@ -8,7 +8,7 @@ const target_text = [
 
 async function scan_img(filePath) {
     const result = await Tesseract.recognize(filePath, "eng", {
-        logger: (m) => console.log(m),
+        logger: () => { },
     });
     const text = result.data.text.toLowerCase();
 
@@ -35,7 +35,7 @@ async function scan_alter(req, res) {
                 targetFound: isTargetFound
             }
         });
-        
+
     } catch (error) {
         console.error('Error during image scanning:', error);
         return res.status(500).json({ error: 'Terjadi kesalahan saat memproses gambar.', details: error.message });
@@ -48,7 +48,7 @@ async function scan_alter(req, res) {
             }
         }
     }
-    
+
 }
 
 module.exports = scan_alter;
