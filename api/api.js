@@ -5,7 +5,16 @@ const tf = require("@tensorflow/tfjs");
 const fs = require("fs");
 const sharp = require("sharp");
 const env = require('../config/env');
-const tacoDonation = require('../function/taco_donation');
+
+const notif_uploud = require('../function/endo-uploud');
+//const tacoDonation = require('../function/taco_donation');
+
+
+const { XMLParser } = require("fast-xml-parser");
+const parser = new XMLParser({
+    ignoreAttributes: false,   // <- WAJIB false, biar attribute ke-baca
+    attributeNamePrefix: "@_", // <- ini yang bikin akses jadi entry.link["@_href"]
+});
 
 const alterScan = require('../function/scan_alter');
 
@@ -61,9 +70,15 @@ function isValidWebhookSignature(payload, signature) {
   console.log('NSFW model loaded');
 })();
 
-app.use(cors());
+app.use(cors({
+  allowedHeaders: [
+    'Content-Type',
+    'x-tako-signature',
+    'bypass-tunnel-reminder',
+  ],
+}));
 app.use(express.json());
-
+/*
 app.get('/discord/members/:guildId/:userId', async (req, res) => {
   try {
     const { guildId, userId } = req.params;
@@ -161,6 +176,7 @@ app.post('/scan-alter', upload.single("image"), async (req, res) => {
     return res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.', details: error.message });
   }
 });
+/*
 app.post('/webhook/tako', async (req, res) => {
   try {
     console.log('Received taco donation webhook:', req.body);
@@ -194,7 +210,107 @@ app.post('/webhook/tako', async (req, res) => {
     return res.status(500).json({ error: 'Failed to handle webhook', details: error.message });
   }
 });
+*/
+
+
+
+// 1. VERIFICATION HANDSHAKE (GET)
+app.get("/youtube/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const challenge = req.query["hub.challenge"];
+  const topic = req.query["hub.topic"];
+
+  console.log(`[WebSub Verification] Mode: ${mode}, Topic: ${topic}`);
+
+  if ((mode === "subscribe" || mode === "unsubscribe") && challenge) {
+    // Kunci WebSub: kembalikan hub.challenge dalam bentuk plaintext dan HTTP 200
+    return res.status(200).send(challenge);
+  }
+
+  return res.sendStatus(400);
+});
+
+app.post(
+    "/youtube/webhook",
+    express.raw({ type: "application/atom+xml" }), // <- ini yang kurang
+    async (req, res) => {
+        res.sendStatus(200);
+
+        try {
+            console.log("=== YOUTUBE NOTIFICATION RECEIVED ===");
+            if (!req.body || req.body.length === 0) return;
+
+            // req.body dari express.raw() itu Buffer, wajib di-convert ke string dulu
+            const xmlString = req.body.toString("utf-8");
+            const jsonObj = parser.parse(xmlString);
+
+            let entries = jsonObj.feed?.entry;
+            if (!entries) return;
+            if (!Array.isArray(entries)) entries = [entries];
+
+            for (const entry of entries) {
+              const channelName = entry.author?.name;
+                const videoId = entry["yt:videoId"];
+                const title = entry.title;
+                const videoUrl = entry.link?.["@_href"];
+
+                console.log("Video Baru Diunggah!");
+                console.log(`Judul   : ${title}`);
+                console.log(`Channel : ${channelName}`);
+                console.log(`Video ID: ${videoId}`);
+                console.log(`URL     : ${videoUrl}`);
+
+                notif_uploud(channelName, videoUrl, videoId);
+            }
+        } catch (err) {
+            console.error("Gagal parse notifikasi YouTube:", err);
+        }
+    }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(env.EXPRESS_PORT, () => {
   console.log(`API is running on http://localhost:${env.EXPRESS_PORT}`);
 });
+
+
+
+
+

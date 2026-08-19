@@ -1,10 +1,21 @@
 ﻿const tb = require('../models/top_chat');
 
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
+const path = require('path');
+
+const thumbnail = new AttachmentBuilder(
+    path.join(__dirname, '..', 'assets', 'leader_board_active.png'),
+    { name: 'leader_board_active.png' }
+);
+
+const banner = new AttachmentBuilder(
+    path.join(__dirname, '..', 'assets', 'banner.png'),
+    { name: 'banner.png' }
+);
 
 
 
-const emnoji_numnber = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+const emnoji_numnber = ['🥇', '🥈', '🥉', '#4', '#5', '#6', '#7', '#8', '#9', '#10'];
 
 module.exports = {
     name: 'top_active',
@@ -19,20 +30,25 @@ module.exports = {
         });
 
         const embed = new EmbedBuilder()
-            .setTitle('# Top 10 User Paling Aktif Chat 🏆')
-            .setDescription('Berikut adalah daftar user yang paling aktif chat di server ini:')
+            .setTitle('Leaderboard')
+            .setThumbnail('attachment://leader_board_active.png')
+            .setDescription('**# 🏆 TOP 10 USER PALING AKTIF** \n Berikut adalah daftar user yang paling aktif chat di server ini:')
             .addFields(
                 topUsers.map((user, index) => ({
-                    name: `${emnoji_numnber[index]}. #${index + 1}`,
-                    value: `<@${user.id_user}> — **${user.amount} chat**`,
+                    name: '',
+                    value: `**${emnoji_numnber[index]}** <@${user.id_user}> — \`${user.amount} chat\``,
                     inline: false
                 }))
             )
             .setFooter({
-                text: 'Akan direset setiap tanggal 1 dan cha di channel tertentu tidak dihitung'
+                text: 'Akan direset setiap tanggal 1'
             })
-            .setColor('#f13efe');
-
-        await interaction.editReply({ embeds: [embed] });
+            .setColor('#f13efe')
+        await interaction.editReply({
+            embeds: [embed],
+            files: [thumbnail],
+        });
     }
+
+
 };
