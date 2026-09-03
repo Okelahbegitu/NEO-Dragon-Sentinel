@@ -25,6 +25,9 @@ module.exports = {
     DB_PASSWORD: (process.env.DB_PASS || process.env.DB_PASSWORD || "").trim(),
     DB_PORT: parseInt(process.env.DB_PORT || "3306"),
 
+    ERROR_WEBHOOK: process.env.ERROR_WEBHOOK,
+    DEVELOPER_ID: process.env.DEVELOPER_ID,
+
     // API Keys
     TOTAL_VIRUS_KEY: process.env.TOTAL_VIRUS_KEY,
 
