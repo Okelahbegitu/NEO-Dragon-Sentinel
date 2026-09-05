@@ -1,8 +1,8 @@
 const axios = require("axios");
 const env = require("./config/env");
 
-const WEBHOOK_URL = process.env.ERROR_WEBHOOK_URL;
-const OWNER_ID = "981723864549707857";
+const WEBHOOK_URL = env.ERROR_WEBHOOK;
+const DEV_ID = env.DEVELOPER_ID;
 
 async function sendCrashReport(error, type) {
     try {
@@ -11,12 +11,12 @@ async function sendCrashReport(error, type) {
             error?.message ||
             String(error);
 
-        await axios.post(
-            env.ERROR_WEBHOOK,
+        await axios.post(WEBHOOK_URL
+            ,
             {
-                content: `<@${env.DEVELOPER_ID}> Bot mengalami error: ${type}`,
+                content: `<@${DEV_ID}> Bot mengalami error: ${type}`,
                 allowed_mentions: {
-                    users: [env.DEVELOPER_ID]
+                    users: [DEV_ID]
                 },
 
                 embeds: [
