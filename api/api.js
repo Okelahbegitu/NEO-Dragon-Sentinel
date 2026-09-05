@@ -215,7 +215,7 @@ app.post('/webhook/tako', async (req, res) => {
 
 
 // 1. VERIFICATION HANDSHAKE (GET)
-app.get("/youtube/webhook", (req, res) => {
+app.get("/webhook/youtube", (req, res) => {
   const mode = req.query["hub.mode"];
   const challenge = req.query["hub.challenge"];
   const topic = req.query["hub.topic"];
