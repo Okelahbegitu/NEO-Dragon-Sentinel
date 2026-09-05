@@ -13,7 +13,7 @@ async function renewSubscribe(channel) {
     const body = new URLSearchParams({
         "hub.mode": "subscribe",
         "hub.topic": channel,
-        "hub.callback": `${env.API_URL}/youtube/webhook`,
+        "hub.callback": `${env.API_URL}/webhook/youtube`,
         "hub.verify": "async"
     });
 
