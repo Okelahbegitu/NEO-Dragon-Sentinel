@@ -232,7 +232,7 @@ app.get("/webhook/youtube", (req, res) => {
 
 app.post(
     "/webhook/youtube",
-    express.raw({ type: "application/atom+xml" }), // <- ini yang kurang
+    express.raw({ type: "application/atom+xml" }), 
     async (req, res) => {
         res.sendStatus(200);
 
