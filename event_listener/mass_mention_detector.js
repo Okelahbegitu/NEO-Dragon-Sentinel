@@ -13,11 +13,13 @@ module.exports = {
         if (!message.guild) return;
         if (whitelist_channels.has(message.channel.id)) return;
         //kecualikan mod
+        if (!message.member) return;
+
         if (message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) return;
 
-        const mentions  =  message.mentions.users.size +
-        message.mentions.roles.size +
-        (message.mentions.everyone ? 1 : 0);
+        const mentions = message.mentions.users.size +
+            message.mentions.roles.size +
+            (message.mentions.everyone ? 1 : 0);
 
         if (mentions >= 5) {
             console.log(`${message.author.tag} mass mention`);

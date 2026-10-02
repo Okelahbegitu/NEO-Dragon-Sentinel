@@ -28,11 +28,6 @@ module.exports = {
                         .setStyle(ButtonStyle.Primary)
                         .setDisabled(current_page === "general_commands"),
                     new ButtonBuilder()
-                        .setCustomId("prefix_commands")
-                        .setLabel("✒️ Prefix Command")
-                        .setStyle(ButtonStyle.Primary)
-                        .setDisabled(current_page === "prefix_commands"),
-                    new ButtonBuilder()
                         .setCustomId("settings_commands")
                         .setLabel("⚙️ Pengaturan")
                         .setStyle(ButtonStyle.Primary)

@@ -66,15 +66,15 @@ async function renderLevelCard({ username, level, xp, maxXp, progress }) {
             <circle cx="715" cy="55" r="100" fill="#8b5cf6" opacity="0.12" />
             <circle cx="100" cy="210" r="90" fill="#c084fc" opacity="0.1" />
 
-            <text x="40" y="72" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">${safeUsername}</text>
-            <text x="40" y="118" fill="#ffffff" font-family="Arial, sans-serif" font-size="24" font-weight="600">Level ${safeLevel}</text>
+            <text x="40" y="72" fill="#ffffff" font-family="DejaVu Sans" font-size="34" font-weight="700">${safeUsername}</text>
+            <text x="40" y="118" fill="#ffffff" font-family="DejaVu Sans" font-size="24" font-weight="600">Level ${safeLevel}</text>
 
-            <text x="40" y="166" fill="#e5e7eb" font-family="Arial, sans-serif" font-size="18" font-weight="600">Progress</text>
+            <text x="40" y="166" fill="#e5e7eb" font-family="DejaVu Sans" font-size="18" font-weight="600">Progress</text>
             <rect x="40" y="178" width="560" height="30" rx="15" fill="#cffafe" opacity="0.95" />
             <rect x="40" y="178" width="${progressWidth}" height="30" rx="15" fill="url(#progress)" />
-            <text x="620" y="200" fill="#ffffff" font-family="Arial, sans-serif" font-size="20" font-weight="700">${clampedProgress}%</text>
+            <text x="620" y="200" fill="#ffffff" font-family="DejaVu Sans" font-size="20" font-weight="700">${clampedProgress}%</text>
 
-            <text x="760" y="182" text-anchor="end" fill="#ffffff" font-family="Arial, sans-serif" font-size="20" font-weight="600">${safeXp} / ${safeMaxXp} XP</text>
+            <text x="760" y="182" text-anchor="end" fill="#ffffff" font-family="DejaVu Sans" font-size="20" font-weight="600">${safeXp} / ${safeMaxXp} XP</text>
         </svg>
     `;
 
@@ -112,9 +112,9 @@ async function renderLeaderboardCard({ title = 'Leaderboard Level', rows }) {
                 <circle cx="90" cy="${baseY + 52}" r="34" fill="#15151A" opacity="0.25" />
                 ${avatarMarkup}
                 <circle cx="90" cy="${baseY + 52}" r="32" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="2" />
-                <text x="145" y="${baseY + 48}" fill="${textColor}" font-family="Arial, sans-serif" font-size="22" font-weight="700">${escapeXml(row.displayName || 'Unknown')}</text>
-                <text x="145" y="${baseY + 73}" fill="${subtextColor}" font-family="Arial, sans-serif" font-size="18" font-weight="600">Level ${escapeXml(row.level ?? 0)}</text>
-                <text x="1010" y="${baseY + 58}" text-anchor="end" fill="${textColor}" font-family="Arial, sans-serif" font-size="30" font-weight="700">#${rank}</text>
+                <text x="145" y="${baseY + 48}" fill="${textColor}" font-family="DejaVu Sans" font-size="22" font-weight="700">${escapeXml(row.displayName || 'Unknown')}</text>
+                <text x="145" y="${baseY + 73}" fill="${subtextColor}" font-family="DejaVu Sans" font-size="18" font-weight="600">Level ${escapeXml(row.level ?? 0)}</text>
+                <text x="1010" y="${baseY + 58}" text-anchor="end" fill="${textColor}" font-family="DejaVu Sans" font-size="30" font-weight="700">#${rank}</text>
             </g>
         `;
     }).join('\n');
@@ -135,8 +135,8 @@ async function renderLeaderboardCard({ title = 'Leaderboard Level', rows }) {
             <circle cx="1000" cy="90" r="150" fill="#8b5cf6" opacity="0.08" />
             <circle cx="120" cy="${height - 70}" r="120" fill="#c084fc" opacity="0.06" />
 
-            <text x="${width / 2}" y="70" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="54" font-weight="800" filter="url(#titleShadow)">${escapeXml(title)}</text>
-            <text x="${width / 2}" y="105" text-anchor="middle" fill="#d8b4fe" font-family="Arial, sans-serif" font-size="20" font-weight="600">Top 10 member berdasarkan level dan XP</text>
+            <text x="${width / 2}" y="70" text-anchor="middle" fill="#ffffff" font-family="DejaVu Sans" font-size="54" font-weight="800" filter="url(#titleShadow)">${escapeXml(title)}</text>
+            <text x="${width / 2}" y="105" text-anchor="middle" fill="#d8b4fe" font-family="DejaVu Sans" font-size="20" font-weight="600">Top 10 member berdasarkan level dan XP</text>
             ${rowMarkup}
         </svg>
     `;
