@@ -112,7 +112,7 @@ module.exports = {
   ],
 
   async execute(interaction) {
-
+    await interaction.deferReply();
     const target = interaction.options.getMember("pelanggar");
     let timeout_duration = interaction.options.getString("timeout") || null;
 
@@ -132,12 +132,10 @@ module.exports = {
     });
 
     if (!isAdmin) {
-      await interaction.reply({
+      await interaction.editReply({
         content:
           "Kamu tidak punya izin untuk menggunakan perintah ini.",
-        flags: MessageFlags.Ephemeral,
       });
-
       return;
     }
 
@@ -156,18 +154,16 @@ module.exports = {
       } else if (timeout_duration.includes('m')) {
         timeout_duration = parseInt(timeout_duration) * 60 * 1000;
       } else {
-        return interaction.reply({
+        return interaction.editReply({
           content: `Format timeout tidak valid. Gunakan format: 1d, 12h, 30m`,
-          flags: MessageFlags.Ephemeral,
         });
       }
     }
 
     // Warn ke-2 tapi tidak ada timeout input
     if (total_warn == 2 && timeout_duration == null) {
-      return interaction.reply({
+      return interaction.editReply({
         content: `User ini sudah warn ke-2! Harap sertakan durasi timeout. (contoh: 1d, 12h, 30m)`,
-        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -180,10 +176,9 @@ module.exports = {
       timeoutDuration: timeout_duration ?? 0,
     });
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `✅ Warn diberikan kepada ${target.user.tag}! Total: ${result.totalWarn} dan dengan alasan: ${reason}`,
-    });;
-
+    });
 
     /*
     ========================================

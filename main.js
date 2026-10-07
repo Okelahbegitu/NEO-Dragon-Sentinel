@@ -1,6 +1,6 @@
 require("./command-deployment");
 require("./index");
-require("./api/api");
+require("./api/index");
 
 require("./scheduler/set_expired");
 require("./scheduler/update_topchat");

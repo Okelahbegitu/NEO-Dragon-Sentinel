@@ -59,16 +59,24 @@ module.exports = (client) => {
     } catch (error) {
       console.error(`Error executing command ${interaction.commandName}:`, error);
 
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: "Terjadi error saat menjalankan command.",
-          flags: MessageFlags.Ephemeral,
-        });
-      } else {
-        await interaction.reply({
-          content: "Terjadi error saat menjalankan command.",
-          flags: MessageFlags.Ephemeral,
-        });
+      try {
+        if (interaction.deferred) {
+          await interaction.editReply({
+            content: "Terjadi error saat menjalankan command.",
+          });
+        } else if (interaction.replied) {
+          await interaction.followUp({
+            content: "Terjadi error saat menjalankan command.",
+            flags: MessageFlags.Ephemeral,
+          });
+        } else {
+          await interaction.reply({
+            content: "Terjadi error saat menjalankan command.",
+            flags: MessageFlags.Ephemeral,
+          });
+        }
+      } catch (responseError) {
+        console.error("Gagal mengirim error response:", responseError);
       }
     }
   });
