@@ -1,6 +1,7 @@
-import { ChannelType } from 'discord.js';
-const achievementTable = require('../../models/user_achievements_tb');
-export default {
+const { ChannelType } = require("discord.js");
+const achievementTable = require("../../models/user_achievements_tb");
+
+module.exports = {
     name: 'messageCreate',
     async execute(message) {
         if (message.author.bot) return;
