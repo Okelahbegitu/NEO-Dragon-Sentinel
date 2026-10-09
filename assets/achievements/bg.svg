@@ -1,0 +1,26 @@
+<svg width="848" height="553" viewBox="0 0 848 553" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <clipPath id="iconClip1">
+      <circle cx="120.5" cy="141.5" r="46.5"/>
+    </clipPath>
+    <clipPath id="iconClip2">
+      <circle cx="123.5" cy="266.5" r="46.5"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="848" height="553" fill="#340D65"/>
+
+  <!-- Header -->
+  <text
+    x="424"
+    y="67"
+    text-anchor="middle"
+    font-family="Inter, Arial, sans-serif"
+    font-size="32"
+    font-weight="700"
+    fill="#FFFFFF"
+  >{{heading}}'s Achievements</text>
+
+
+  {{data}}
