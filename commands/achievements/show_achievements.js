@@ -151,6 +151,7 @@ async function show(interaction) {
     await interaction.deferReply();
 
     const selectedUser = interaction.options.getUser("user");
+    const viewerId = interaction.user.id;
     const usernameId = selectedUser?.id ?? interaction.user.id;
     const index = 0;
     const rendered = await renderAchievements(usernameId, index, interaction.client);
@@ -161,12 +162,12 @@ async function show(interaction) {
     const attachment = new AttachmentBuilder(image, { name: "achievements.png" });
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setCustomId(`prev_achievements_${usernameId}_${index - PAGE_SIZE}`)
+            .setCustomId(`prev_achievements_${viewerId}_${usernameId}_${index - PAGE_SIZE}`)
             .setLabel("⬅️")
             .setStyle(ButtonStyle.Primary)
             .setDisabled(!rendered.isHasPrev),
         new ButtonBuilder()
-            .setCustomId(`next_achievements_${usernameId}_${index + PAGE_SIZE}`)
+            .setCustomId(`next_achievements_${viewerId}_${usernameId}_${index + PAGE_SIZE}`)
             .setLabel("➡️")
             .setStyle(ButtonStyle.Primary)
             .setDisabled(!rendered.isHasNext)

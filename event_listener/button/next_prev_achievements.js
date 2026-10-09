@@ -27,13 +27,14 @@ module.exports = {
         const [
             action,
             menu,
+            viewerId,
             usernameId,
             indexString
         ] = customId.split("_");
 
         const index = parseInt(indexString, 10);
 
-        if (interaction.user.id !== usernameId) {
+        if (interaction.user.id !== viewerId) {
             return interaction.reply({
                 content: "❌ Kamu tidak bisa menggunakan tombol ini.",
                 ephemeral: true
@@ -67,7 +68,7 @@ module.exports = {
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId(
-                        `prev_achievements_${usernameId}_${index - limit}`
+                        `prev_achievements_${viewerId}_${usernameId}_${index - limit}`
                     )
                     .setLabel("⬅️")
                     .setStyle(ButtonStyle.Primary)
@@ -75,7 +76,7 @@ module.exports = {
 
                 new ButtonBuilder()
                     .setCustomId(
-                        `next_achievements_${usernameId}_${index + limit}`
+                        `next_achievements_${viewerId}_${usernameId}_${index + limit}`
                     )
                     .setLabel("➡️")
                     .setStyle(ButtonStyle.Primary)
