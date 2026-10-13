@@ -1,4 +1,4 @@
-const { ChannelType } = require("discord.js");
+const {ChannelType } = require("discord.js");
 const achievementTable = require("../../models/user_achievements_tb");
 
 module.exports = {
@@ -10,6 +10,7 @@ module.exports = {
 
         if (channel.isThread() && channel.type === ChannelType.PublicThread) {
             const creatorId = channel.ownerId;
+            const creatorUser = await message.client.users.fetch(creatorId).catch(() => null);
 
             console.log(`Thread '${channel.name}' dibuat oleh ID: ${creatorId}`);
             console.log(`Username pembuat: ${creatorUser ? creatorUser.tag : 'Tidak ditemukan'}`);

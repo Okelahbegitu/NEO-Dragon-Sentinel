@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { ChannelType, Events } = require('discord.js');
 const tabel = require('../../models/user_achievements_tb');
 
 
