@@ -31,7 +31,7 @@ module.exports = {
 
         if (replyCount >= 5) {
             // Achievement unlocked
-            await tabel.lookupOrCreate({
+            await tabel.findOrCreate({
                 user_id: userId,
                 achievement_id: 3 // Ganti dengan ID achievement yang sesuai
             });
