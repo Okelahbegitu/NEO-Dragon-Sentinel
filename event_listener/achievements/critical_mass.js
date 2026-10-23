@@ -1,65 +1,70 @@
-const {ChannelType } = require("discord.js");
+const { ChannelType, Events } = require("discord.js");
 const achievementTable = require("../../models/user_achievements_tb");
 
+const ACHIEVEMENT_ID = 5;
+const REQUIRED_MESSAGES = 30;
+
+async function countUserMessages(channel, userId, minimumMessages) {
+    let totalMessages = 0;
+    let before;
+
+    while (totalMessages < minimumMessages) {
+        const messages = await channel.messages.fetch({
+            limit: 100,
+            ...(before ? { before } : {})
+        });
+
+        if (messages.size === 0) break;
+
+        totalMessages += messages.filter(({ author }) => author.id === userId).size;
+        before = messages.last().id;
+
+        if (messages.size < 100) break;
+    }
+
+    return totalMessages;
+}
+
 module.exports = {
-    name: 'messageCreate',
+    name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
 
         const { channel } = message;
 
-        if (channel.isThread() && channel.type === ChannelType.PublicThread) {
-            const creatorId = channel.ownerId;
-            const creatorUser = await message.client.users.fetch(creatorId).catch(() => null);
+        if (!channel.isThread() || channel.type !== ChannelType.PublicThread) return;
 
-            console.log(`Thread '${channel.name}' dibuat oleh ID: ${creatorId}`);
-            console.log(`Username pembuat: ${creatorUser ? creatorUser.tag : 'Tidak ditemukan'}`);
-            let totalMessages = 0;
+        const creatorId = channel.ownerId;
+        if (!creatorId || !channel.messages) return;
 
-            async function countUserMessages(thread) {
-                
-                let lastMessageId = null;
-                while (true) {
-                    let messagesList = await thread.messages.fetch({ limit: 100, before: lastMessageId });
+        try {
+            const totalMessages = await countUserMessages(
+                channel,
+                creatorId,
+                REQUIRED_MESSAGES
+            );
 
-                    //kalau kosong akhiri
-                    if (messagesList.size === 0) break;
+            if (totalMessages < REQUIRED_MESSAGES) return;
 
-                    messagesList.forEach((msg) => {
-                        if (msg.author.id !== creatorId) {
-                            totalMessages++;
-                            lastMessageId = msg.id;
-                        }
-                    });
+            const [, created] = await achievementTable.findOrCreate({
+                where: {
+                    username_id: creatorId,
+                    achievement_id: ACHIEVEMENT_ID
+                },
+                defaults: {
+                    username_id: creatorId,
+                    achievement_id: ACHIEVEMENT_ID
                 }
+            });
+
+            if (created) {
+                console.log(`Pencapaian "Critical Mass" berhasil ditambahkan untuk ID: ${creatorId}`);
             }
-
-            countUserMessages(channel).then(() => {
-                console.log(`Total pesan dari pengguna lain di thread '${channel.name}': ${totalMessages}`);
-
-                if (totalMessages >= 30) {
-                    console.log(`Pencapaian "Critical Mass" tercapai oleh ID: ${creatorId}`);
-                    achievementTable.findOrCreate({
-                        where: {
-                            username_id: creatorId,
-                            achievement_id: 5
-                        },
-                        defaults: { 
-                            username_id: creatorId,
-                            achievement_id: 5
-                        }
-                    }).then(([achievement, created]) => {
-                        if (created) {
-                            console.log(`Pencapaian "Critical Mass" berhasil ditambahkan untuk ID: ${creatorId}`);
-                        } else {
-                            console.log(`Pencapaian "Critical Mass" sudah ada untuk ID: ${creatorId}`);
-                        }
-                    }).catch((error) => {
-                        console.error(`Terjadi kesalahan saat menambahkan pencapaian untuk ID: ${creatorId}`, error);
-                    })
-                }
-            })
-
+        } catch (error) {
+            console.error(
+                `Gagal memproses pencapaian "Critical Mass" untuk thread ${channel.id}`,
+                error
+            );
         }
     }
-}
+};
