@@ -32,10 +32,10 @@ module.exports = {
         if (replyCount >= 5) {
             // Achievement unlocked
             await tabel.findOrCreate({
-                where: {user_id: userId,
+                where: {username_id: userId,
                         achievement_id: 3},
                 defaults: {
-                    user_id: userId,
+                    username_id: userId,
                     achievement_id: 3,
                 }
             });
